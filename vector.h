@@ -78,6 +78,7 @@
  *      vec_delete  -- Get the element at the given index, and remove it from
  *                     the vector.
  *      vec_map     -- Apply a function to each element in the vector.
+ *      vec_sort    -- Sort the data in the vector.
  */
 
 #ifndef _VECTOR_H_
@@ -511,6 +512,31 @@ void *vec_delete(struct vector *v, unsigned int i);
  *              information about the format of the operator.
  */
 void vec_map(struct vector *v, VecOperator op, void *scratch);
+
+/*
+ * vec_sort
+ *
+ * Description: Sorts the data in the vector according to the given comparison
+ *              function. The vector will be sorted in ascending order according
+ *              to the compare function. The compare function should return a
+ *              value less than, equal to, or greater than zero if the firt
+ *              argument is less than, equal to, or greater than the second
+ *              argument, respectively.
+ *
+ * Arguments:   v       Pointer to the vector to sort.
+ *              compar  Comparison function taking as arguments pointers to
+ *                      elements in the vector, returning a value indicating the
+ *                      ordering of the elements.
+ *
+ * Notes:       Uses the underlying 'qsort' function in the standard library.
+ *              The 'vec_sort' function is just a wrapper around this call, so
+ *              it can probably be inlined.
+ *
+ *              Be careful with the 'compar' argument. The arguments are of type
+ *              'void *', but these are pointers to the elements in the vector.
+ *              So they are really 'void **'.
+ */
+void vec_sort(struct vector *v, int (*compar)(const void *, const void *));
 
 
 #endif /* end of include guard: _VECTOR_H_ */

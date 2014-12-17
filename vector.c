@@ -65,6 +65,7 @@
  *      vec_delete  -- Get the element at the given index, and remove it from
  *                     the vector.
  *      vec_map     -- Apply a function to each element in the vector.
+ *      vec_sort    -- Sort the data in the vector.
  */
 
 #include <stdlib.h>
@@ -509,4 +510,17 @@ static int _checkspace(struct vector *v)
      * Otherwise, the code was zeroed.
      */
     return rc;
+}
+
+/*
+ * Sort the data in the vector using the standard library qsort function. The
+ * arguments to the qsort function are pretty easy to get from the vector.
+ */
+void vec_sort(struct vector *v, int (*compar)(const void *, const void *))
+{
+    /*
+     * Sort the data. This is a vector of vec_size(v) elements, each with size
+     * VEC_ELEMSIZE. The comparison function can just be passed through.
+     */
+    qsort(v->data, vec_size(v), VEC_ELEMSIZE, compar);
 }
