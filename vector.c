@@ -66,6 +66,7 @@
  *                     the vector.
  *      vec_map     -- Apply a function to each element in the vector.
  *      vec_sort    -- Sort the data in the vector.
+ *      vec_swap    -- Swap two elements in the vector.
  */
 
 #include <stdlib.h>
@@ -523,4 +524,25 @@ void vec_sort(struct vector *v, int (*compar)(const void *, const void *))
      * VEC_ELEMSIZE. The comparison function can just be passed through.
      */
     qsort(v->data, vec_size(v), VEC_ELEMSIZE, compar);
+}
+
+/*
+ * Swap two of the elements by first storing one in a temporary variable, then
+ * moving them around.
+ */
+void vec_swap(struct vector *v, unsigned int i, unsigned int j)
+{
+    void *tmp;                      /* Temporary storage for element i. */
+
+    /* Get element i, and store it in a temporary variable. */
+    tmp = vec_get(v, i);
+
+    /*
+     * Set the ith  element to the value of the jth element. The ith element is
+     * still stored in tmp.
+     */
+    vec_set(v, i, vec_get(v, j));
+
+    /* Now move the temporary value into the jth element. */
+    vec_set(v, j, tmp);
 }

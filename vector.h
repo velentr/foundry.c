@@ -79,6 +79,7 @@
  *                     the vector.
  *      vec_map     -- Apply a function to each element in the vector.
  *      vec_sort    -- Sort the data in the vector.
+ *      vec_swap    -- Swap two elements in the vector.
  */
 
 #ifndef _VECTOR_H_
@@ -538,5 +539,18 @@ void vec_map(struct vector *v, VecOperator op, void *scratch);
  */
 void vec_sort(struct vector *v, int (*compar)(const void *, const void *));
 
+/*
+ * vec_swap
+ *
+ * Description: Swap two elements in the vector. This will set the value at
+ *              index 'i' to the value at index 'j', and vice versa.
+ *
+ * Arguments:   v   Pointer to the vector in which to switch elements.
+ *              i   Index of the first element to swap.
+ *              j   Index of the second element to swap.
+ *
+ * Notes:       Swaps using a temporary variable.
+ */
+void vec_swap(struct vector *v, unsigned int i, unsigned int j);
 
 #endif /* end of include guard: _VECTOR_H_ */
