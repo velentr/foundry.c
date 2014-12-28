@@ -173,7 +173,7 @@ void vec_free(struct vector *v)
  * Get the number of elements currently in the vector. This is stored in the
  * structure, so we just have to return the proper member.
  */
-unsigned int vec_size(struct vector *v)
+unsigned int vec_size(const struct vector *v)
 {
     return v->size;
 }
@@ -184,7 +184,7 @@ unsigned int vec_size(struct vector *v)
  * not give the size in bytes, and is not affected by the number of elements
  * currently in the buffer.
  */
-unsigned int vec_space(struct vector *v)
+unsigned int vec_space(const struct vector *v)
 {
     return v->space;
 }
@@ -246,7 +246,7 @@ int vec_shrink(struct vector *v)
  * Return a boolean indicating if the vector is empty. This can be done simply
  * by checking if the size (number of elements) is 0.
  */
-int vec_isempty(struct vector *v)
+int vec_isempty(const struct vector *v)
 {
     return (vec_size(v) == 0);
 }
@@ -255,7 +255,7 @@ int vec_isempty(struct vector *v)
  * Just return the requested element from the vector's buffer. Does not do any
  * bounds checking, so be careful.
  */
-void *vec_get(struct vector *v, unsigned int i)
+void *vec_get(const struct vector *v, unsigned int i)
 {
     return v->data[i];
 }
@@ -274,7 +274,7 @@ void vec_set(struct vector *v, unsigned int i, void *e)
  * sure that the vector has valid data before trying to access it, because
  * 'vec_get' does not do bounds checks.
  */
-void *vec_head(struct vector *v)
+void *vec_head(const struct vector *v)
 {
     void *head;                 /* Pointer for storing the return value, so
                                    there is just one return statement. */
@@ -311,7 +311,7 @@ void *vec_head(struct vector *v)
  * Note that the bounds check is used because the vec_get function does not do
  * any bounds checking.
  */
-void *vec_tail(struct vector *v)
+void *vec_tail(const struct vector *v)
 {
     void *tail;                 /* Pointer for storing the return value, so
                                    there is just one return statement. */

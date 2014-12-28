@@ -237,7 +237,7 @@ void vec_free(struct vector *v);
  *              This function is extremely simple; it just returns one of the
  *              data members of the structure. It can easily be inlined.
  */
-unsigned int vec_size(struct vector *v);
+unsigned int vec_size(const struct vector *v);
 
 /*
  * vec_space
@@ -259,7 +259,7 @@ unsigned int vec_size(struct vector *v);
  *              This is a very simple function, just returning a member of the
  *              struct. It can easily be inlined.
  */
-unsigned int vec_space(struct vector *v);
+unsigned int vec_space(const struct vector *v);
 
 /*
  * vec_resize
@@ -336,7 +336,7 @@ int vec_shrink(struct vector *v);
  *              This function is very simple; it just compares a member to 0. It
  *              can easily be inlined.
  */
-int vec_isempty(struct vector *v);
+int vec_isempty(const struct vector *v);
 
 /*
  * vec_get
@@ -359,7 +359,7 @@ int vec_isempty(struct vector *v);
  *              This function is really simple, just gets an element from the
  *              buffer. It can probably be inlined.
  */
-void *vec_get(struct vector *v, unsigned int i);
+void *vec_get(const struct vector *v, unsigned int i);
 
 /*
  * vec_set
@@ -405,7 +405,7 @@ void vec_set(struct vector *v, unsigned int i, void *e);
  *              element. Make sure to check for a NULL pointer returned from
  *              this function, indicating the vector is empty.
  */
-void *vec_head(struct vector *v);
+void *vec_head(const struct vector *v);
 
 /*
  * vec_tail
@@ -423,7 +423,7 @@ void *vec_head(struct vector *v);
  * Notes:       Does explicit bounds checking, so make sure to check for a NULL
  *              return value if the vector is empty.
  */
-void *vec_tail(struct vector *v);
+void *vec_tail(const struct vector *v);
 
 /*
  * vec_push
