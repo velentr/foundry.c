@@ -140,8 +140,11 @@
  * Notes:       Assumes that 'i' is a valid index in the heap. The worst-case
  *              time complexity of this function is 'O(log n)', where 'n' is the
  *              number of elements on the heap.
+ *
+ *              Even though this function is recursive, GCC will use tail call
+ *              optimization to convert this to an iterative function.
  */
-void _siftup(struct binheap *bh, unsigned int i)
+static void _siftup(struct binheap *bh, unsigned int i)
 {
     /* The code below will look cleaner if we keep a pointer to the vector in a
      * local variable */
@@ -150,20 +153,19 @@ void _siftup(struct binheap *bh, unsigned int i)
     /* Index of the parent of the current node. */
     unsigned int p = _parent(i);
 
-    /* Keep looping while the current index is valid and the current node is
-     * less than its parent. */
-    while (i > 0 && bh->cmp(vec_get(v, i), vec_get(v, p)) < 0)
+    /*
+     * Check to make sure the current node is not at the root (otherwise, the
+     * parent node does not exist). Then, if the current node is smaller than
+     * its parent, we need to swap them.
+     */
+    if (i > 0 && bh->cmp(vec_get(v, i), vec_get(v, p)) < 0)
     {
-        /*
-         * The current node is smaller than its parent. Swap it with the parent
-         * to sift it upwards in the heap. Then, we need to continue to sift it
-         * upwards.
-         */
+        /* Swap the current node with its parent. */
         vec_swap(v, i, p);
 
-
-        i = p;                  /* The current node is now at the index p. */
-        p = _parent(i);         /* Get the new parent of the current node. */
+        /* Continue to sift the same node up the heap until the heap property is
+         * restored. */
+        _siftup(bh, p);
     }
 }
 
@@ -186,15 +188,19 @@ void _siftup(struct binheap *bh, unsigned int i)
  *
  *              The worst-case time complexity of this function is 'O(log n)',
  *              where 'n' is the number of elements on the heap.
+ *
+ *              Even though this function is recursive, GCC will use tail call
+ *              optimization to convert this to an iterative function.
  */
-void _siftdown(struct binheap *bh, unsigned int i)
+static void _siftdown(struct binheap *bh, unsigned int i)
 {
     /* The code below will look cleaner if we keep a pointer to the vector in a
      * local variable */
     struct vector *v = &(bh->vec);
 
     /* Indices of the left and right children of the root node at i. */
-    unsigned int l, r;
+    unsigned int l = _lchild(i);
+    unsigned int r = _rchild(i);
 
     /*
      * Index of the node that is the smallest of the root and its children.
@@ -203,54 +209,38 @@ void _siftdown(struct binheap *bh, unsigned int i)
      */
     unsigned int smallest = i;
 
-    /* We want to loop this as long as the root node is not the smallest. */
-    do {
-        /*
-         * Here we set the root node to be the smallest node of the previous
-         * iteration. Note that this is redundant for the first iteration. We
-         * must also get its child indices here.
-         */
-        i = smallest;
-        l = _lchild(i);
-        r = _rchild(i);
+    /* Check if the left child exists and the root node is greater than its
+     * left child. */
+    if (l < vec_size(v) &&
+            bh->cmp(vec_get(v, l), vec_get(v, i)) < 0)
+    {
+        /* The left child is smaller than the parent. Store it here. */
+        smallest = l;
+    }
 
-        /*
-         * Check if the left child exists and the root node is greater than its
-         * left child. Note that the root node always exists.
-         */
-        if (l < vec_size(v) &&
-                bh->cmp(vec_get(v, l), vec_get(v, i)) < 0)
-        {
-            /* The left child is smaller than the parent. Store it here. */
-            smallest = l;
-        }
-        /*
-         * Next, check if the right child exists and the smallest node is
-         * greater than the right child.
-         */
-        if (r < vec_size(v) &&
-                bh->cmp(vec_get(v, r), vec_get(v, smallest)) < 0)
-        {
-            /* If so, right child is the smallest of the three. Store this new
-             * index here. */
-            smallest = r;
-        }
+    /* Next, check if the right child exists and the smallest node is
+     * greater than the right child. */
+    if (r < vec_size(v) &&
+            bh->cmp(vec_get(v, r), vec_get(v, smallest)) < 0)
+    {
+        /* If so, right child is the smallest of the three. Store this new
+         * index here. */
+        smallest = r;
+    }
 
-        /*
-         * If the root node is not the smallest, then swap it with the smallest
-         * node. Now we have a new heap that needs to be sifted, with the root
-         * node at index i.
-         */
-        if (smallest != i)
-        {
-            vec_swap(v, i, smallest);
-        }
+    /*
+     * If the root node is not the smallest, then swap it with the smallest
+     * node. Now we have a new heap that needs to be sifted, with the root
+     * node at index i.
+     */
+    if (smallest != i)
+    {
+        /* Swap the root down the heap. */
+        vec_swap(v, i, smallest);
 
-        /*
-         * Continue to loop until the root node is the smallest. At this point,
-         * the heap property is restored.
-         */
-    } while (smallest != i);
+        /* Then sift it again until the heap property is restored. */
+        _siftdown(bh, smallest);
+    }
 }
 
 /*

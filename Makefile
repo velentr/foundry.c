@@ -1,5 +1,5 @@
 CC	?=	gcc
-CFLAGS	=	-O2 -c -Wall -Wstrict-prototypes -pedantic -ansi
+CFLAGS	+=	-O2 -c -Wall -Wstrict-prototypes -pedantic -ansi
 OBJ	= 	binheap.o vector.o
 
 all: $(OBJ)
