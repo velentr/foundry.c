@@ -282,7 +282,7 @@ void bheap_free(struct binheap *bh)
  * Get the number of elements stored in the vector. The vector stores this
  * number in one of its members, so this is a really fast operation.
  */
-unsigned int bheap_size(struct binheap *bh)
+unsigned int bheap_size(const struct binheap *bh)
 {
     return vec_size(&(bh->vec));
 }
@@ -291,7 +291,7 @@ unsigned int bheap_size(struct binheap *bh)
  * Get the number of spaces in the vector that stores the data for the binary
  * heap. Just acts as a wrapper around the vec_space function.
  */
-unsigned int bheap_space(struct binheap *bh)
+unsigned int bheap_space(const struct binheap *bh)
 {
     return vec_space(&(bh->vec));
 }
@@ -300,7 +300,7 @@ unsigned int bheap_space(struct binheap *bh)
  * Check if the binary heap is empty. The heap is empty if and only if the
  * vector holding its data is empty.
  */
-int bheap_isempty(struct binheap *bh)
+int bheap_isempty(const struct binheap *bh)
 {
     return vec_isempty(&(bh->vec));
 }
@@ -374,7 +374,7 @@ void *bheap_pop(struct binheap *bh)
  * We can just return the head of the vector. Since the heap property is
  * satisfied, this will be the minimum element of the heap.
  */
-void *bheap_peek(struct binheap *bh)
+void *bheap_peek(const struct binheap *bh)
 {
     return vec_head(&(bh->vec));
 }

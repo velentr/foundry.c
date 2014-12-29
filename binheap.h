@@ -117,7 +117,7 @@
  *              order, so a scratch argument shouldn't be necessary in this
  *              case.
  */
-typedef int (*HeapCompare)(void *a, void *b);
+typedef int (*HeapCompare)(const void *a, const void *b);
 
 /*
  * struct binheap
@@ -223,7 +223,7 @@ void bheap_free(struct binheap *bh);
  *              This function is just a wrapper around getting the size of the
  *              vector. It can easily be inlined.
  */
-unsigned int bheap_size(struct binheap *bh);
+unsigned int bheap_size(const struct binheap *bh);
 
 /*
  * bheap_space
@@ -243,7 +243,7 @@ unsigned int bheap_size(struct binheap *bh);
  *
  *              This is a very simple function, so it can probably be inlined.
  */
-unsigned int bheap_space(struct binheap *bh);
+unsigned int bheap_space(const struct binheap *bh);
 
 /*
  * bheap_isempty
@@ -262,7 +262,7 @@ unsigned int bheap_space(struct binheap *bh);
  *
  *              This function is very simple; it can easily be inlined.
  */
-int bheap_isempty(struct binheap *bh);
+int bheap_isempty(const struct binheap *bh);
 
 /*
  * bheap_push
@@ -326,7 +326,7 @@ void *bheap_pop(struct binheap *bh);
  *              'n' is the size of the heap. This function is very simple and
  *              can easily be inlined.
  */
-void *bheap_peek(struct binheap *bh);
+void *bheap_peek(const struct binheap *bh);
 
 
 #endif /* end of include guard: _BINHEAP_H_ */
