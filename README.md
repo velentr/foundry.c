@@ -10,7 +10,8 @@ data structure (I'll probably organize this better later).
 
 Currently, I have completed and tested the following data structures:
 
- - vector : Dynamically-resizable arrays, similar to the vectors in STL.
+ - `vector` : Dynamically-resizable arrays, similar to the vectors in STL.
+ - `binheap` : binary min-heap, implemented using a vector.
 
 # Copyright
 

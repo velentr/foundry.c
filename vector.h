@@ -199,19 +199,18 @@ typedef void *(*VecOperator)(void *e, unsigned int i, void *scr);
  *
  *              Also, it is the size in bytes, not the number of elements. To
  *              get the size for a vector with 'n' elements, pass 'n *
- *              sizeof(void *)'.
+ *              VEC_ELEMSIZE'.
  */
 int vec_init(struct vector *v, size_t size);
 
 /*
  * vec_free
  *
- * Description: Free that memory used by the given vector. Does not actually
- *              change any of the members of the vector, just frees the buffer.
+ * Description: Free the memory used by the given vector. This will change some
+ *              members of the vector, but the vector should not be used after
+ *              being freed, so this shouldn't matter.
  *
  * Arguments:   v       Pointer to the vector to free.
- *
- * Returns:     None.
  *
  * Notes:       If any of the elements in the buffer need to be freed, they
  *              should be freed before calling this function. It is probably
