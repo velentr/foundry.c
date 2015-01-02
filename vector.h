@@ -433,17 +433,20 @@ void *vec_tail(const struct vector *v);
  *              will be resized so the new element will fit. If this resize
  *              fails (i.e. failed memory allocation), then -1 is returned and
  *              the element is not added; the vector is left unchanged. If the
- *              element is successfully added, then 0 is returned.
+ *              element is successfully added, then the index of the new element
+ *              is returned.
  *
  * Arguments:   v   Pointer to the vector to which to add an element.
  *              e   Element to add to the end of the vector.
  *
- * Returns:     If the element is successfully added, returns 0. If the vector
- *              needs to be resized to fit the element, and the resize fails,
- *              returns -1.
+ * Returns:     If the element is successfully added, returns the index of the
+ *              new element. If the vector needs to be resized to fit the
+ *              element, and the resize fails, returns -1.
  *
  * Notes:       The state of the vector is not changed if the resize operation
- *              fails.
+ *              fails. Also note that the returned index is signed, whereas it
+ *              should normally be an unsigned number for the other vector
+ *              operations.
  */
 int vec_push(struct vector *v, void *e);
 

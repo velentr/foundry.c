@@ -351,9 +351,12 @@ void *vec_tail(const struct vector *v)
  */
 int vec_push(struct vector *v, void *e)
 {
-    int rc;                 /* Return code indicating if the element was added.
-                               This is an indicator of whether or not the resize
-                               failed. */
+    /*
+     * Return code indicating if the element was added. This is an indicator of
+     * whether or not the resize failed. Also represents the index of the new
+     * element on success.
+     */
+    int rc;
 
     /*
      * Make sure that there is enough space for the new element in the vector,
@@ -367,11 +370,11 @@ int vec_push(struct vector *v, void *e)
         /*
          * If the resize did succeed, then there is enough space in the buffer
          * for the new element. Add the element to the tail and increment the
-         * count. Note that 'size - 1' is used because the buffer is
-         * zero-indexed.
+         * count. The old size is the index of the new element; store in rc so
+         * it can be returned.
          */
-        v->size++;
-        vec_set(v, vec_size(v) - 1, e);
+        rc = v->size++;
+        vec_set(v, rc, e);
     }
 
     return rc;              /* Return code was set by resize. Just return it. */
