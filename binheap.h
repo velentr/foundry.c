@@ -181,6 +181,9 @@ struct binheap {
  * Returns:     If memory is successfully allocated for the vector, returns 0.
  *              If the memory allocation fails, returns -1.
  *
+ * Pre:         bh != NULL
+ *              cmp != NULL
+ *
  * Notes:       The 'size' argument should generally be 0, unless there is a
  *              specific reason to limit the size of the vector. Note that this
  *              argument is given in bytes, not number of elements. To get the
@@ -196,6 +199,8 @@ int bheap_init(struct binheap *bh, HeapCompare cmp, size_t size);
  *              of the heap, just frees the vector used for storing data.
  *
  * Arguments:   bh  Pointer to the binary heap to free.
+ *
+ * Pre:         bh != NULL
  *
  * Notes:       If any of the elements of the heap need to be freed, they should
  *              be freed before calling this function. The best way to do this
@@ -217,6 +222,8 @@ void bheap_free(struct binheap *bh);
  * Returns:     Returns the number of elements currently stored on the binary
  *              heap.
  *
+ * Pre:         bh != NULL
+ *
  * Notes:       Note this returns the number of elements on the heap, not the
  *              amount of space held by the heap.
  *
@@ -237,6 +244,8 @@ unsigned int bheap_size(const struct binheap *bh);
  * Returns:     Returns the total number of elements that can be stored in the
  *              binary heap before it must be expanded.
  *
+ * Pre:         bh != NULL
+ *
  * Notes:       This gives the number of elements that can fit, not the number
  *              of bytes. It generally does not need to be called, because the
  *              binary heap will automatically expand when needed.
@@ -255,6 +264,8 @@ unsigned int bheap_space(const struct binheap *bh);
  *
  * Returns:     If the number of elements in the vector is 0, returns true.
  *              Else, returns false.
+ *
+ * Pre:         bh != NULL
  *
  * Notes:       Uses the traditional 'int' for the boolean, instead defining a
  *              new typedef or using the C99 'stdbool'. Does this for
@@ -284,6 +295,10 @@ int bheap_isempty(const struct binheap *bh);
  *              0. If there is not enough space on the heap, and the memory
  *              allocation fails, returns -1.
  *
+ * Pre:         bh != NULL
+ *
+ * Post:        Heap property holds.
+ *
  * Notes:       This operation has a worst-case time complexity of 'O(log n)'
  *              where 'n' is the size of the heap.
  */
@@ -306,6 +321,10 @@ int bheap_push(struct binheap *bh, void *e);
  * Returns:     Returns the minimum element from the heap, or 'NULL' if the heap
  *              is empty.
  *
+ * Pre:         bh != NULL
+ *
+ * Post:        Heap property holds.
+ *
  * Notes:       This operation has a worst-case time complexity of 'O(log n)'
  *              where 'n' is the size of the heap.
  */
@@ -321,6 +340,8 @@ void *bheap_pop(struct binheap *bh);
  *
  * Returns:     Returns the minimum element from the heap, or 'NULL' if the heap
  *              is empty.
+ *
+ * Pre:         bh != NULL
  *
  * Notes:       This operation has a worst-case time complexity of 'O(1)', where
  *              'n' is the size of the heap. This function is very simple and

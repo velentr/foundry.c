@@ -54,32 +54,32 @@
  *                      typedef is used for calls to 'vec_map'.
  *
  * Functions:
- *      vec_init    -- Initialize the memory for the vector. Must be called
- *                     before the vector can be used.
- *      vec_free    -- Free all the memory associated with the vector.
- *      vec_size    -- Gets the current number of elements stored in the vector.
- *      vec_space   -- Returns the number of elements that can currently be
- *                     stored in the vector. The vector will automatically
- *                     expand past this limit as needed.
- *      vec_resize  -- Resize the vector to the given size. This will be done
- *                     automatically as necessary, so it shouldn't generally
- *                     need to be called.
- *      vec_shrink  -- Shrink the vector so that it contains the absolute
- *                     minimum amount of memory needed to store all the
- *                     elements.
- *      vec_isempty -- Determines if the vector is empty (does not contain any
- *                     elements).
- *      vec_get     -- Get the element at the given index.
- *      vec_set     -- Set the element at the given index to the given value.
- *      vec_head    -- Get the first element in the vector.
- *      vec_tail    -- Get the last element in the vector.
- *      vec_push    -- Add an element to the end of the vector.
- *      vec_pop     -- Remove an element from the end of the vector.
- *      vec_delete  -- Get the element at the given index, and remove it from
- *                     the vector.
- *      vec_map     -- Apply a function to each element in the vector.
- *      vec_sort    -- Sort the data in the vector.
- *      vec_swap    -- Swap two elements in the vector.
+ *      vec_init        Initialize the memory for the vector. Must be called
+ *                      before the vector can be used.
+ *      vec_free        Free all the memory associated with the vector.
+ *      vec_size        Gets the current number of elements stored in the vector.
+ *      vec_space       Returns the number of elements that can currently be
+ *                      stored in the vector. The vector will automatically
+ *                      expand past this limit as needed.
+ *      vec_resize      Resize the vector to the given size. This will be done
+ *                      automatically as necessary, so it shouldn't generally
+ *                      need to be called.
+ *      vec_shrink      Shrink the vector so that it contains the absolute
+ *                      minimum amount of memory needed to store all the
+ *                      elements.
+ *      vec_isempty     Determines if the vector is empty (does not contain any
+ *                      elements).
+ *      vec_get         Get the element at the given index.
+ *      vec_set         Set the element at the given index to the given value.
+ *      vec_head        Get the first element in the vector.
+ *      vec_tail        Get the last element in the vector.
+ *      vec_push        Add an element to the end of the vector.
+ *      vec_pop         Remove an element from the end of the vector.
+ *      vec_delete      Get the element at the given index, and remove it from
+ *                      the vector.
+ *      vec_map         Apply a function to each element in the vector.
+ *      vec_sort        Sort the data in the vector.
+ *      vec_swap        Swap two elements in the vector.
  */
 
 #ifndef _VECTOR_H_
@@ -191,6 +191,8 @@ typedef void *(*VecOperator)(void *e, unsigned int i, void *scr);
  * Returns:     If the memory is successfully allocated, returns 0. If the
  *              memory allocation fails, returns -1.
  *
+ * Pre:         v != NULL
+ *
  * Notes:       The 'size' argument shouldn't generally be used unless there is
  *              a specific reason to limit the size of the vector (or if the
  *              needed size of the vector is known beforehand). It should only
@@ -212,6 +214,8 @@ int vec_init(struct vector *v, size_t size);
  *
  * Arguments:   v       Pointer to the vector to free.
  *
+ * Pre:         v != NULL
+ *
  * Notes:       If any of the elements in the buffer need to be freed, they
  *              should be freed before calling this function. It is probably
  *              easiest to just call the 'vec_map' function with the element
@@ -228,6 +232,8 @@ void vec_free(struct vector *v);
  * Arguments:   v   Pointer to the vector to count the elements of.
  *
  * Returns:     Returns the current number of elements in the vector.
+ *
+ * Pre:         v != NULL
  *
  * Notes:       This returns the number of elements currently stored in the
  *              vector; it does not return how much space is available. Use
@@ -249,6 +255,8 @@ unsigned int vec_size(const struct vector *v);
  *
  * Returns:     Returns the total number of elements that can be stored in the
  *              vector before it must be expanded.
+ *
+ * Pre:         v != NULL
  *
  * Notes:       Keep in mind this returns the number of elements that can fit in
  *              the buffer, not the number of bytes. This doesn't generally need
@@ -278,6 +286,8 @@ unsigned int vec_space(const struct vector *v);
  * Returns:     If the memory allocation succeeds, returns 0. If the allocation
  *              fails, returns -1.
  *
+ * Pre:         v != NULL
+ *
  * Notes:       If the passed size is 0, then the buffer will be freed. If the
  *              buffer inside the vector is NULL, then a new buffer will be
  *              allocated automatically. These are side effects of the 'realloc'
@@ -302,6 +312,8 @@ int vec_resize(struct vector *v, size_t size);
  * Returns:     Returns a code indicating whether or not the memory allocation
  *              succeeded. If the allocation succeeded, returns 0. It it failed,
  *              returns -1.
+ *
+ * Pre:         v != NULL
  *
  * Notes:       It is unlikely (impossible?) that reallocating a buffer to a
  *              smaller size will fail, the return value is only included for
@@ -328,6 +340,8 @@ int vec_shrink(struct vector *v);
  * Returns:     If the number of elements in the vector is 0, returns true.
  *              Else, returns false.
  *
+ * Pre:         v != NULL
+ *
  * Notes:       Uses the traditional 'int' for the boolean, instead defining a
  *              new typedef or using the C99 'stdbool'. Does this for
  *              portability reasons mostly.
@@ -350,6 +364,9 @@ int vec_isempty(const struct vector *v);
  * Returns:     Returns the void pointer stored at the given index in the
  *              buffer.
  *
+ * Pre:         v != NULL
+ *              i < vec_size(v)
+ *
  * Notes:       Be careful with this function. No bounds checking is done on the
  *              argument, so the returned data might be garbage if the index is
  *              out of range. Using an out of range index probably won't
@@ -371,6 +388,9 @@ void *vec_get(const struct vector *v, unsigned int i);
  * Arguments:   v   Pointer to the vector in which to modify an element.
  *              i   Index of the element to modify.
  *              e   New element value to store at the given index.
+ *
+ * Pre:         v != NULL
+ *              i < vec_size(v)
  *
  * Notes:       This does not do any bounds checking, which can lead to bad
  *              behavior if the passed index is beyond the bounds of the buffer.
@@ -399,6 +419,8 @@ void vec_set(struct vector *v, unsigned int i, void *e);
  * Returns:     If the vector is not empty, returns the void pointer stored at
  *              index 0 in the vector. If the vector is empty, returns NULL.
  *
+ * Pre:         v != NULL
+ *
  * Notes:       This function will do bounds checking; that is, it will
  *              explicitly check that the vector is not empty before getting the
  *              element. Make sure to check for a NULL pointer returned from
@@ -418,6 +440,8 @@ void *vec_head(const struct vector *v);
  * Returns:     Returns the last valid element in the vector. This is the
  *              element stored in the buffer with the highest index. If the
  *              vector is empty, returns NULL.
+ *
+ * Pre:         v != NULL
  *
  * Notes:       Does explicit bounds checking, so make sure to check for a NULL
  *              return value if the vector is empty.
@@ -443,6 +467,8 @@ void *vec_tail(const struct vector *v);
  *              new element. If the vector needs to be resized to fit the
  *              element, and the resize fails, returns -1.
  *
+ * Pre:         v != NULL
+ *
  * Notes:       The state of the vector is not changed if the resize operation
  *              fails. Also note that the returned index is signed, whereas it
  *              should normally be an unsigned number for the other vector
@@ -463,6 +489,8 @@ int vec_push(struct vector *v, void *e);
  *
  * Returns:     Returns the tail of the vector. This is the element in the
  *              buffer with the highest index.
+ *
+ * Pre:         v != NULL
  *
  * Notes:       Make sure to check for a NULL return value if the vector is
  *              empty. If you want to reclaim memory after a lot of elements are
@@ -489,6 +517,9 @@ void *vec_pop(struct vector *v);
  * Returns:     Returns the deleted element, or NULL if the given index was out
  *              of range.
  *
+ * Pre:         v != NULL
+ *              i < vec_size(v);
+ *
  * Notes:       This is a slow and ugly function because of the large memory
  *              movement. It also messes with the indices of the vector in order
  *              to keep it dense and ordered. You probably shouldn't use this
@@ -508,6 +539,8 @@ void *vec_delete(struct vector *v, unsigned int i);
  * Arguments:   v       Pointer to the vector to iterate over.
  *              op      Operation to perform on each element.
  *              scratch Scratch pointer to pass as an argument to the operation.
+ *
+ * Pre:         v != NULL
  *
  * Notes:       This is the preferred way of iterating over the vector, as using
  *              this does not make assumptions about the internals of the
@@ -531,6 +564,8 @@ void vec_map(struct vector *v, VecOperator op, void *scratch);
  *                      elements in the vector, returning a value indicating the
  *                      ordering of the elements.
  *
+ * Pre:         v != NULL
+ *
  * Notes:       Uses the underlying 'qsort' function in the standard library.
  *              The 'vec_sort' function is just a wrapper around this call, so
  *              it can probably be inlined.
@@ -551,8 +586,13 @@ void vec_sort(struct vector *v, int (*compar)(const void *, const void *));
  *              i   Index of the first element to swap.
  *              j   Index of the second element to swap.
  *
+ * Pre:         v != NULL
+ *              i < vec_size(v)
+ *              j < vec_size(v)
+ *
  * Notes:       Swaps using a temporary variable.
  */
 void vec_swap(struct vector *v, unsigned int i, unsigned int j);
+
 
 #endif /* end of include guard: _VECTOR_H_ */

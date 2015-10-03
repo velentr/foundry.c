@@ -51,6 +51,8 @@
  *                      upwards until the heap property is restored.
  *      _siftdown       Take an invalid parent of two valid heaps, and sift it
  *                      down until the heap is valid again.
+ *      _checkheap      Verify the heap property for the given binheap. Useful
+ *                      only for debugging.
  * Functions:
  *      bheap_init      Initialize memory for the binary heap. Must be called
  *                      before the heap can be used.
@@ -69,6 +71,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 #include "binheap.h"
 
@@ -136,6 +139,9 @@
  * Arguments:   bh  Pointer to the binary heap to sift through.
  *              i   Index of the node to sift upwards, if needed.
  *
+ * Pre:         bh != NULL
+ *              i < vec_size(&(bh->vec))
+ *
  * Notes:       Assumes that 'i' is a valid index in the heap. The worst-case
  *              time complexity of this function is 'O(log n)', where 'n' is the
  *              number of elements on the heap.
@@ -147,10 +153,17 @@ static void _siftup(struct binheap *bh, unsigned int i)
 {
     /* The code below will look cleaner if we keep a pointer to the vector in a
      * local variable */
-    struct vector *v = &(bh->vec);
+    struct vector *v;
 
     /* Index of the parent of the current node. */
-    unsigned int p = _parent(i);
+    unsigned int p;
+    int j;
+
+    assert(bh != NULL);
+    assert(i < vec_size(&(bh->vec)));
+
+    v = &(bh->vec);
+    p = _parent(i);
 
     /*
      * Check to make sure the current node is not at the root (otherwise, the
@@ -180,6 +193,9 @@ static void _siftup(struct binheap *bh, unsigned int i)
  *              i   Index of the node to use a the root of an invalid binary
  *                  heap.
  *
+ * Pre:         bh != NULL
+ *              i < vec_size(&(bh->vec))
+ *
  * Notes:       This function assumes that the root node in the heap may violate
  *              the heap property (i.e. it is greater than one of its children),
  *              but heap rooted at both of its children still satisfy this
@@ -195,11 +211,11 @@ static void _siftdown(struct binheap *bh, unsigned int i)
 {
     /* The code below will look cleaner if we keep a pointer to the vector in a
      * local variable */
-    struct vector *v = &(bh->vec);
+    struct vector *v;
 
     /* Indices of the left and right children of the root node at i. */
-    unsigned int l = _lchild(i);
-    unsigned int r = _rchild(i);
+    unsigned int l;
+    unsigned int r;
 
     /*
      * Index of the node that is the smallest of the root and its children.
@@ -207,6 +223,13 @@ static void _siftdown(struct binheap *bh, unsigned int i)
      * the children is smaller.
      */
     unsigned int smallest = i;
+
+    assert(bh != NULL);
+    assert(i < vec_size(&(bh->vec)));
+
+    v = &(bh->vec);
+    l = _lchild(i);
+    r = _rchild(i);
 
     /* Check if the left child exists and the root node is greater than its
      * left child. */
@@ -243,11 +266,65 @@ static void _siftdown(struct binheap *bh, unsigned int i)
 }
 
 /*
+ * _checkheap
+ *
+ * Description: This function checks to see if the heap property is violated in
+ *              the given heap. That is, it checks to see if every parent node
+ *              is less than or equal to both of its children. It returns a
+ *              boolean value; returns true if the heap property holds, and
+ *              returns false if it is violated.
+ *
+ * Arguments:   bh  Pointer to the heap to check.
+ *
+ * Pre:         bh != NULL
+ *              i < vec_size(&(bh->vec))
+ *
+ * Notes:       This function is used purely for debugging, as the heap property
+ *              will always hold outside of the functions in this file. It is
+ *              used for checking postconditions in the functions that
+ *              manipulate the heap order.
+ */
+static int _checkheap(const struct binheap *bh)
+{
+    unsigned int i;             /* Loop index for iterating over vector. */
+    int rc = 0;                 /* Return value for tracking heap violations. */
+    const struct vector *v;     /* Stores the vector to iterate over. */
+
+    assert(bh != NULL);
+
+    v = &(bh->vec);
+
+    /* Iterate over every element of the binheap (up to the parent of the last
+     * element), ensuring that every element is less than or equal to its
+     * children. */
+    for (i = 0; i < vec_size(v); i++)
+    {
+        if (_lchild(i) < vec_size(v)
+                && bh->cmp(vec_get(v, i), vec_get(v, _lchild(i))) > 0)
+        {
+            rc++;
+        }
+        if (_rchild(i) < vec_size(v)
+                && bh->cmp(vec_get(v, i), vec_get(v, _rchild(i))) > 0)
+        {
+            rc++;
+        }
+    }
+
+    /* rc contains a count of the violations; want to see if the number of
+     * violations is 0. */
+    return rc == 0;
+}
+
+/*
  * Initialize the binary heap so that it is empty and ready to use. Store the
  * comparison function in the structure and initialize the vector.
  */
 int bheap_init(struct binheap *bh, HeapCompare cmp, size_t size)
 {
+    assert(bh != NULL);
+    assert(cmp != NULL);
+
     /* Store the comparison function in the binheap struct. */
     bh->cmp = cmp;
 
@@ -263,6 +340,8 @@ int bheap_init(struct binheap *bh, HeapCompare cmp, size_t size)
  */
 void bheap_free(struct binheap *bh)
 {
+    assert(bh != NULL);
+
     /* Deinitialize the vector holding the heap data. */
     vec_free(&(bh->vec));
 }
@@ -273,6 +352,8 @@ void bheap_free(struct binheap *bh)
  */
 unsigned int bheap_size(const struct binheap *bh)
 {
+    assert(bh != NULL);
+
     return vec_size(&(bh->vec));
 }
 
@@ -282,6 +363,8 @@ unsigned int bheap_size(const struct binheap *bh)
  */
 unsigned int bheap_space(const struct binheap *bh)
 {
+    assert(bh != NULL);
+
     return vec_space(&(bh->vec));
 }
 
@@ -291,6 +374,8 @@ unsigned int bheap_space(const struct binheap *bh)
  */
 int bheap_isempty(const struct binheap *bh)
 {
+    assert(bh != NULL);
+
     return vec_isempty(&(bh->vec));
 }
 
@@ -303,15 +388,18 @@ int bheap_push(struct binheap *bh, void *e)
     int rc;     /* Variable for holding the return code from pushing the element
                    onto the vector. */
 
+    assert(bh != NULL);
+
     /* Add the new element to the end of the vector. This is the location of the
      * first unfilled node in the lowest level of the tree. */
     rc = vec_push(&(bh->vec), e);
 
     /* Check if the new element was added successfully. */
-    if (rc == 0)
+    if (rc != -1)
     {
         /* Sift the element upwards until the heap property is restored. */
         _siftup(bh, vec_size(&(bh->vec)) - 1);
+        assert(_checkheap(bh));
     }
 
     return rc;  /* Return the value indicating if the element was successfully
@@ -326,14 +414,20 @@ int bheap_push(struct binheap *bh, void *e)
 void *bheap_pop(struct binheap *bh)
 {
     /* Get a pointer to the vector to simplify the code. */
-    struct vector *v = &(bh->vec);
+    struct vector *v;
 
     /* Get the minimum element from the heap, which is currently stored at the
      * head of the vector. Note this might be NULL is the vector is empty. */
-    void *min = vec_head(v);
+    void *min;
 
     /* Get the old tail of the vector. May be NULL if the vector is empty. */
-    void *tail = vec_pop(v);
+    void *tail;
+
+    assert(bh != NULL);
+
+    v = &(bh->vec);
+    min = vec_head(v);
+    tail = vec_pop(v);
 
     /*
      * If the vector is empty, then either there were no elements on the heap to
@@ -353,6 +447,7 @@ void *bheap_pop(struct binheap *bh)
 
         /* The heap property is probably violated; sift the head down. */
         _siftdown(bh, 0);
+        assert(_checkheap(bh));
     }
 
     /* The element 'min' has now been removed from the heap. */
@@ -365,5 +460,8 @@ void *bheap_pop(struct binheap *bh)
  */
 void *bheap_peek(const struct binheap *bh)
 {
+    assert(bh != NULL);
+
     return vec_head(&(bh->vec));
 }
+

@@ -71,6 +71,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 #include "vector.h"
 
@@ -89,6 +90,8 @@
  *              create enough space). Returns -1 is a resize was attempted, but
  *              did not succeed.
  *
+ * Pre:         v != NULL
+ *
  * Notes:       This function is used so that the vector will grow according to
  *              some predefined rule. Any function that needs to expand the
  *              vector should use this function rather than calling resize
@@ -106,6 +109,8 @@ static int _checkspace(struct vector *v);
  */
 int vec_init(struct vector *v, size_t size)
 {
+    assert(v != NULL);
+
     v->size = 0;        /* We always start off storing 0 elements. */
 
     if (size == 0)      /* If the passed size is 0, use the default. */
@@ -166,6 +171,8 @@ int vec_init(struct vector *v, size_t size)
  */
 void vec_free(struct vector *v)
 {
+    assert(v != NULL);
+
     vec_resize(v, 0);
 }
 
@@ -175,6 +182,8 @@ void vec_free(struct vector *v)
  */
 unsigned int vec_size(const struct vector *v)
 {
+    assert(v != NULL);
+
     return v->size;
 }
 
@@ -186,6 +195,8 @@ unsigned int vec_size(const struct vector *v)
  */
 unsigned int vec_space(const struct vector *v)
 {
+    assert(v != NULL);
+
     return v->space;
 }
 
@@ -204,6 +215,8 @@ int vec_resize(struct vector *v, size_t size)
 
     void *blk;  /* Temporary storage for the new memory block to avoid memory
                    leaks if realloc fails. */
+
+    assert(v != NULL);
 
     blk = (void *)realloc(v->data, size);   /* Try to allocate a new buffer. */
 
@@ -238,6 +251,8 @@ int vec_resize(struct vector *v, size_t size)
  */
 int vec_shrink(struct vector *v)
 {
+    assert(v != NULL);
+
     /* New size is the number of elements times the size of each element. */
     return vec_resize(v, vec_size(v) * VEC_ELEMSIZE);
 }
@@ -248,6 +263,8 @@ int vec_shrink(struct vector *v)
  */
 int vec_isempty(const struct vector *v)
 {
+    assert(v != NULL);
+
     return (vec_size(v) == 0);
 }
 
@@ -257,6 +274,9 @@ int vec_isempty(const struct vector *v)
  */
 void *vec_get(const struct vector *v, unsigned int i)
 {
+    assert(v != NULL);
+    assert(i < vec_size(v));
+
     return v->data[i];
 }
 
@@ -266,6 +286,9 @@ void *vec_get(const struct vector *v, unsigned int i)
  */
 void vec_set(struct vector *v, unsigned int i, void *e)
 {
+    assert(v != NULL);
+    assert(i < vec_size(v));
+
     v->data[i] = e;
 }
 
@@ -278,6 +301,8 @@ void *vec_head(const struct vector *v)
 {
     void *head;                 /* Pointer for storing the return value, so
                                    there is just one return statement. */
+
+    assert(v != NULL);
 
     /*
      * Check to see if the vector is empty. Note that the element accessor
@@ -315,6 +340,7 @@ void *vec_tail(const struct vector *v)
 {
     void *tail;                 /* Pointer for storing the return value, so
                                    there is just one return statement. */
+    assert(v != NULL);
 
     /*
      * Check to see if the vector is empty. Note that the element accessor
@@ -358,6 +384,8 @@ int vec_push(struct vector *v, void *e)
      */
     int rc;
 
+    assert(v != NULL);
+
     /*
      * Make sure that there is enough space for the new element in the vector,
      * resizing the vector if needed. If this fails, then the new element cannot
@@ -390,6 +418,8 @@ void *vec_pop(struct vector *v)
 {
     void *elem;             /* Temporary storage for the element to return. */
 
+    assert(v != NULL);
+
     /*
      * Get the last element in the vector (the tail). This call will return NULL
      * if the vector is empty. In this case, no element will be removed.
@@ -419,6 +449,9 @@ void *vec_delete(struct vector *v, unsigned int i)
     void *elem;         /* Temporary storage for the deleted element. */
     void *src, *dest;   /* Pointers used for the call to memmove. */
     size_t n;           /* Number of bytes that need to be moved. */
+
+    assert(v != NULL);
+    assert(i < vec_size(v));
 
     /*
      * First, check to make sure that the given index is within the bounds of
@@ -472,6 +505,8 @@ void vec_map(struct vector *v, VecOperator op, void *scratch)
     void *elem;     /* New element to be stored at each location. */
     int i;          /* Loop index counter. */
 
+    assert(v != NULL);
+
     /*
      * Loop over every element in the vector, performing the operation on each
      * element and storing the result. Write the new value back into the vector.
@@ -493,6 +528,8 @@ void vec_map(struct vector *v, VecOperator op, void *scratch)
 static int _checkspace(struct vector *v)
 {
     int rc;         /* Return code for the resize operation. */
+
+    assert(v != NULL);
 
     /*
      * Check if the vector is full (i.e. the buffer cannot fit another element
@@ -522,6 +559,8 @@ static int _checkspace(struct vector *v)
  */
 void vec_sort(struct vector *v, int (*compar)(const void *, const void *))
 {
+    assert(v != NULL);
+
     /*
      * Sort the data. This is a vector of vec_size(v) elements, each with size
      * VEC_ELEMSIZE. The comparison function can just be passed through.
@@ -536,6 +575,10 @@ void vec_sort(struct vector *v, int (*compar)(const void *, const void *))
 void vec_swap(struct vector *v, unsigned int i, unsigned int j)
 {
     void *tmp;                      /* Temporary storage for element i. */
+
+    assert(v != NULL);
+    assert(i < vec_size(v));
+    assert(j < vec_size(v));
 
     /* Get element i, and store it in a temporary variable. */
     tmp = vec_get(v, i);
