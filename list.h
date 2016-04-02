@@ -34,9 +34,9 @@
  * to existing datatypes; this allows all memory allocation to be completely
  * external.
  *
- * Constants:
- *
  * Datatypes:
+ *      struct list
+ *      struct list_elem
  *
  * Functions:
  *

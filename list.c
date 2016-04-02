@@ -145,6 +145,8 @@ struct list_elem *list_popfront(struct list *l)
 {
     struct list_elem *e;
 
+    assert(!list_empty(l));
+
     /* Get the first element and remove it. */
     e = list_head(l);
     return list_remove(e);
@@ -154,6 +156,8 @@ struct list_elem *list_popfront(struct list *l)
 struct list_elem *list_popback(struct list *l)
 {
     struct list_elem *e;
+
+    assert(!list_empty(l));
 
     /* Get the last element and remove it. */
     e = list_tail(l);
@@ -180,6 +184,6 @@ int list_empty(struct list *l)
 {
     assert(l != NULL);
 
-    return (l->sentinal.prev == l->sentinal.next);
+    return (l->sentinal.prev == &l->sentinal);
 }
 

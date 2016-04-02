@@ -1,9 +1,14 @@
 CC	?=	gcc
-CFLAGS	+=	-c -O2 -march=native -fomit-frame-pointer \
-		-Wall -Wstrict-prototypes -pedantic -ansi
+CFLAGS	+=	-c -O2 -DNDEBUG -march=native -fomit-frame-pointer -pedantic \
+		-ansi
 OBJ	= 	binheap.o list.o vector.o
 
+debug: CFLAGS = -c -Og -g -Wall -Wstrict-prototypes -pedantic -ansi
+
+
 all: $(OBJ)
+
+debug: $(OBJ)
 
 binheap.o: binheap.c binheap.h vector.h
 	$(CC) $(CFLAGS) $<
