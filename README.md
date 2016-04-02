@@ -15,7 +15,7 @@ Currently, I have completed and tested the following data structures:
 
 # Copyright
 
-Copyright (c) 2014 Brian Kubisiak <velentr.rc@gmail.com>
+Copyright (c) 2014-16 Brian Kubisiak <velentr.rc@gmail.com>
 
 Comments, complaints, suggestions, etc. are all welcome.
 

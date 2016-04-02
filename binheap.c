@@ -157,7 +157,6 @@ static void _siftup(struct binheap *bh, unsigned int i)
 
     /* Index of the parent of the current node. */
     unsigned int p;
-    int j;
 
     assert(bh != NULL);
     assert(i < vec_size(&(bh->vec)));
