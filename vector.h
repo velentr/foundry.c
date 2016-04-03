@@ -23,47 +23,24 @@
  */
 
 
-
-/*
- * vector.h
+/**
+ * \file vector.h
  *
- * Dynamically-resizable generic arrays, public interface.
+ * \author Brian Kubisiak
  *
- * This file contains the public interface for dynamically-resizable arrays of
- * generic void pointers. The interface for this datastructure is similar to STL
- * vectors, but without templates or classes. In many cases, optimizes for speed
- * rather than checking inputs; garbage in, garbage out.
+ * \brief Dynamically-resizable generic arrays.
+ *
+ * Implementation for dynamically-resizable arrays of generic void pointers. The
+ * interface for this datastructure is similar to STL vectors, but without
+ * templates or classes. In many cases, optimizes for speed rather than checking
+ * inputs; garbage in, garbage out.
  *
  * Vectors using these functions are assumed to be dense. That is, there are no
  * gaps in between the valid elements in the vector. Also note that the order of
  * the elements within the vector is guarenteed to be constant, while the
  * indices are subject to change (e.g. if an element is deleted).
  *
- * Constants:
- *      DEF_VEC_SIZE    The default size for a vector, if no size is given on
- *                      initialization.
- *      VEC_ELEMSIZE    The size of each element in the vector.
- *
- * Datatypes:
- *      struct vector   Array-like data type that can store a set of void
- *                      pointers. The vector will expand as needed to store new
- *                      elements. The order of the elements in the vector will
- *                      remain constant.
- *      VecOperator     Function that operates on each element of a vector,
- *                      returning the new value for the element. This function
- *                      typedef is used for calls to 'vec_map'.
- *
  * Functions:
- *      vec_init        Initialize the memory for the vector. Must be called
- *                      before the vector can be used.
- *      vec_free        Free all the memory associated with the vector.
- *      vec_size        Gets the current number of elements stored in the vector.
- *      vec_space       Returns the number of elements that can currently be
- *                      stored in the vector. The vector will automatically
- *                      expand past this limit as needed.
- *      vec_resize      Resize the vector to the given size. This will be done
- *                      automatically as necessary, so it shouldn't generally
- *                      need to be called.
  *      vec_shrink      Shrink the vector so that it contains the absolute
  *                      minimum amount of memory needed to store all the
  *                      elements.
@@ -100,18 +77,17 @@
 
 
 
-/*
- * struct vector
+/**
+ * \brief Array-like data type that can store a set of void pointers.
  *
- * Description: This structure contains all the variables and memory necessary
- *              for storing a dynamically-resizable array of void pointers. This
- *              is used mainly when the number of elements in the array is not
- *              known beforehand, or it is desirable to allow the array to grow
- *              with the data. Note that the order of the data stored in the
- *              vector will not change based on any of the operators in this
- *              file, but the indices may change.
+ * This structure contains all the variables and memory necessary for storing a
+ * dynamically-resizable array of void pointers. This is used mainly when the
+ * number of elements in the array is not known beforehand, or it is desirable
+ * to allow the array to grow with the data. Note that the order of the data
+ * stored in the vector will not change based on any of the operators in this
+ * file, but the indices may change.
  *
- * Members:     size    Stores a count of the total number of elements in the
+ * size    Stores a count of the total number of elements in the
  *                      vector.
  *              space   Stores the current number of elements that can fit in
  *                      the allocated array. Used for determining when the
@@ -120,477 +96,424 @@
  *                      any data type. Size may change as more elements are
  *                      added.
  *
- * Usage:       When using a vector, first call the 'vec_init' function to
- *              initialize the size and space, and to allocate a new buffer
- *              for the data. Then, any of the 'vec_*' functions may be called
- *              to operate on the vector.
+ * When using a vector, first call the #vec_init() function to initialize the
+ * size and space, and to allocate a new buffer for the data. Then, any of the
+ * \c vec_* functions may be called to operate on the vector.
  *
- *              None of the 'vec_*' functions will change the order of the
- *              elements in the vector; however, some may change to values of
- *              the elements, or change the indices of the elements (i.e. when
- *              an element is deleted).
+ * None of the \c vec_* functions will change the order of the elements in the
+ * vector; however, some may change to values of the elements, or change the
+ * indices of the elements (i.e. when an element is deleted).
  *
- *              When the vector is no longer needed, call the 'vec_free'
- *              function to free the buffer for this structure. If the elements
- *              of the vector are dynamically allocated, it might be necessary
- *              to use the 'vec_map' function to call a deallocator on each
- *              individual element before calling 'vec_free'. Once 'vec_free'
- *              has been called on the vector, then it should no longer be used,
- *              unless 'vec_init' is called on it again.
+ * When the vector is no longer needed, call the #vec_free() function to free
+ * the buffer for this structure. If the elements of the vector are dynamically
+ * allocated, it might be necessary to use the #vec_map() function to call a
+ * deallocator on each individual element before calling #vec_free(). Once
+ * #vec_free() has been called on the vector, then it should no longer be used,
+ * unless #vec_init() is called on it again.
  */
 struct vector {
-    unsigned int size;
-    unsigned int space;
-    void **data;
+    unsigned int size;  /**< Count of the number of elements in the vector. */
+    unsigned int space; /**< Number of elements that can currently fit in the
+                             allocated memory. */
+    void **data;        /**< Dynamically-allocated array for holding data. */
 };
 
 
-/*
- * VecOperator
+/**
+ * \brief Function that operates on each element of a vector, returning the new
+ * value for the element.
  *
- * Description: This indicates a pointer to a function that can be mapped over a
- *              vector. Takes in an element, the element's index, and a
- *              user-supplied argument. Returns a new element to replace the one
- *              that was passed as an argument. It can be used to implement a
- *              wide variety of filters, iterators, or accumulators. See the
- *              'vec_map' function for details of how this is used.
+ * This indicates a pointer to a function that can be mapped over a vector.
+ * Takes in an element, the element's index, and a user-supplied argument.
+ * Returns a new element to replace the one that was passed as an argument. It
+ * can be used to implement a wide variety of filters, iterators, or
+ * accumulators. See the #vec_map() function for details of how this is used.
  *
- * Arguments:   e   Element to operate on.
- *              i   Index of the element being operated on.
- *              scr Scratch pointer passed to the function unmodified by the
- *                  'vec_map' function. This is used to pass other arguments to
- *                  the operator.
+ * \param e Element to operate on.
+ * \param i Index of the element being operated on.
+ * \param scr Scratch pointer passed to the function unmodified by the
+ *        #vec_map() function. This is used to pass other arguments to the
+ *        operator.
  *
- * Returns:     Returns a new element to be written back into the vector at the
- *              location of the current element (i.e. at the index i).
+ * \return Returns a new element to be written back into the vector at the
+ *         location of the current element (i.e. at the index i).
  *
- * Notes:       If a value needs to be returned outside the 'vec_map' function
- *              (e.g. if you are summing the elements), then use the scratch
- *              pointer to hold the return value.
+ * \note If a value needs to be returned outside the #vec_map() function (e.g.
+ *       if you are summing the elements), then use the scratch pointer to hold
+ *       the return value.
  */
 typedef void *(*VecOperator)(void *e, unsigned int i, void *scr);
 
 
-/*
- * vec_init
+/**
+ * \brief Initialize the memory for the vector. Must be called before the vector
+ * can be used.
  *
- * Description: Initialize the given vector so that it is ready to be used. This
- *              includes allocating the memory for the vector, as well as
- *              setting initial values for the member variables. The argument
- *              'v' is a pointer to the vector to initialize. The argument
- *              'size' is an initial value for the number of bytes in the
- *              vector, or 0 if the default size is desired. Returns a flag
- *              indicating whether or not the operation succeeded.
+ * Initialize the given vector so that it is ready to be used. This includes
+ * allocating the memory for the vector, as well as setting initial values for
+ * the member variables. The argument \p v is a pointer to the vector to
+ * initialize. The argument \p size is an initial value for the number of bytes
+ * in the vector, or \c 0 if the default size is desired. Returns a flag
+ * indicating whether or not the operation succeeded.
  *
- * Arguments:   v       Pointer to the vector to initialize.
- *              size    Initial value for the number of bytes in the vector. If
- *                      this argument is 0, then the default size will be used.
- *                      It is important to note that this is the number bytes,
- *                      not the number of elements.
+ * \param v Pointer to the vector to initialize.
+ * \param size Initial value for the number of bytes in the vector. If this
+ *        argument is \c 0, then the default size will be used.  It is important
+ *        to note that this is the number bytes, not the number of elements.
  *
- * Returns:     If the memory is successfully allocated, returns 0. If the
- *              memory allocation fails, returns -1.
+ * \return If the memory is successfully allocated, returns \c 0. If the memory
+ *         allocation fails, returns \c -1.
  *
- * Pre:         v != NULL
+ * \pre <tt>v != NULL</tt>
  *
- * Notes:       The 'size' argument shouldn't generally be used unless there is
- *              a specific reason to limit the size of the vector (or if the
- *              needed size of the vector is known beforehand). It should only
- *              be used when extreme performance is needed; you should probably
- *              just pass 0.
+ * \note The \p size argument shouldn't generally be used unless there is a
+ *       specific reason to limit the size of the vector (or if the needed size
+ *       of the vector is known beforehand). It should only be used when extreme
+ *       performance is needed; you should probably just pass 0.
  *
- *              Also, it is the size in bytes, not the number of elements. To
- *              get the size for a vector with 'n' elements, pass 'n *
- *              VEC_ELEMSIZE'.
+ * \note Also, it is the size in bytes, not the number of elements. To get the
+ *       size for a vector with \c n elements, pass <tt>n * VEC_ELEMSIZE</tt>.
  */
 int vec_init(struct vector *v, size_t size);
 
-/*
- * vec_free
+/**
+ * \brief Free all the memory associated with the vector.
  *
- * Description: Free the memory used by the given vector. This will change some
- *              members of the vector, but the vector should not be used after
- *              being freed, so this shouldn't matter.
+ * Free the memory used by the given vector. This will change some members of
+ * the vector, but the vector should not be used after being freed, so this
+ * shouldn't matter.
  *
- * Arguments:   v       Pointer to the vector to free.
+ * \param v Pointer to the vector to free.
  *
- * Pre:         v != NULL
+ * \pre <tt>v != NULL</tt>
  *
- * Notes:       If any of the elements in the buffer need to be freed, they
- *              should be freed before calling this function. It is probably
- *              easiest to just call the 'vec_map' function with the element
- *              deallocator.
+ * \note If any of the elements in the buffer need to be freed, they should be
+ * freed before calling this function. It is probably easiest to just call the
+ * #vec_map() function with the element deallocator.
  */
 void vec_free(struct vector *v);
 
-/*
- * vec_size
+/**
+ * \brief Get the total number of elements currently stored in the given vector.
  *
- * Description: Get the total number of elements currently stored in the given
- *              vector.
+ * \param v Pointer to the vector to count the elements of.
  *
- * Arguments:   v   Pointer to the vector to count the elements of.
+ * \return Returns the current number of elements in the vector.
  *
- * Returns:     Returns the current number of elements in the vector.
+ * \pre <tt>v != NULL</tt>
  *
- * Pre:         v != NULL
- *
- * Notes:       This returns the number of elements currently stored in the
- *              vector; it does not return how much space is available. Use
- *              'vec_space' to find how how space is currently available.
- *
- *              This function is extremely simple; it just returns one of the
- *              data members of the structure. It can easily be inlined.
+ * \note This returns the number of elements currently stored in the vector; it
+ * does not return how much space is available. Use #vec_space() to find how how
+ * space is currently available.
  */
 unsigned int vec_size(const struct vector *v);
 
-/*
- * vec_space
+/**
+ * \brief Gets the total number of elements that can currently be stored in the
+ * buffer.
  *
- * Description: Gets the total number of elements that can currently be stored
- *              in the buffer. This is the number of elements that the vector
- *              can contain before it must be expanded to fit more elements.
+ * This is the number of elements that the vector can contain before it must be
+ * expanded to fit more elements.
  *
- * Arguments:   v   Pointer to the vector to count the total spaces of.
+ * \param v Pointer to the vector to count the total spaces of.
  *
- * Returns:     Returns the total number of elements that can be stored in the
- *              vector before it must be expanded.
+ * \return Returns the total number of elements that can be stored in the vector
+ * before it must be expanded.
  *
- * Pre:         v != NULL
+ * \pre <tt>v != NULL</tt>
  *
- * Notes:       Keep in mind this returns the number of elements that can fit in
- *              the buffer, not the number of bytes. This doesn't generally need
- *              to be called, because the vector will be expanded automatically
- *              when needed.
- *
- *              This is a very simple function, just returning a member of the
- *              struct. It can easily be inlined.
+ * \note Keep in mind this returns the number of elements that can fit in the
+ * buffer, not the number of bytes. This doesn't generally need to be called,
+ * because the vector will be expanded automatically when needed.
  */
 unsigned int vec_space(const struct vector *v);
 
-/*
- * vec_resize
+/**
+ * \brief Resize the dynamically-allocated buffer holding the elements of the
+ * vector.
  *
- * Description: Resize the dynamically-allocated buffer holding the elements of
- *              the vector. The buffer of the given vector is reallocated to the
- *              given size (in bytes). Returns a flag indicating if the
- *              operation succeeded or not. If the memory allocation failed,
- *              returns -1. If the allocation succeeded, returns 0. Note that
- *              this does not check to make sure that the current elements of
- *              the buffer will fit in the new size; shrinking it too much will
- *              result in data loss.
+ * This will be called automatically when needed, so it generally does not need
+ * to be called by the user. The buffer of the given vector is reallocated to
+ * the given size (in bytes).  Returns a flag indicating if the operation
+ * succeeded or not. If the memory allocation failed, returns -1. If the
+ * allocation succeeded, returns 0. Note that this does not check to make sure
+ * that the current elements of the buffer will fit in the new size; shrinking
+ * it too much will result in data loss.
  *
- * Arguments:   v       Pointer to the vector that needs to be resized.
- *              size    The new size for the buffer in bytes.
+ * \param v Pointer to the vector that needs to be resized.
+ * \param size The new size for the buffer in bytes.
  *
- * Returns:     If the memory allocation succeeds, returns 0. If the allocation
- *              fails, returns -1.
+ * \return If the memory allocation succeeds, returns 0. If the allocation
+ * fails, returns -1.
  *
- * Pre:         v != NULL
+ * \pre <tt>v != NULL</tt>
  *
- * Notes:       If the passed size is 0, then the buffer will be freed. If the
- *              buffer inside the vector is NULL, then a new buffer will be
- *              allocated automatically. These are side effects of the 'realloc'
- *              library function being used.
+ * \note If the passed size is 0, then the buffer will be freed. If the buffer
+ * inside the vector is \c NULL, then a new buffer will be allocated
+ * automatically.  These are side effects of the #realloc() library function
+ * being used.
  *
- *              Note that if the size is too small to hold all the elements
- *              currently in the buffer, data will be lost. Make sure to keep
- *              track of these elements elsewhere if this happens.
+ * \note Note that if the size is too small to hold all the elements currently
+ * in the buffer, data will be lost. Make sure to keep track of these elements
+ * elsewhere if this happens.
  */
 int vec_resize(struct vector *v, size_t size);
 
-/*
- * vec_shrink
+/**
+ * \brief Shrink the vector.
  *
- * Description: Shrink the buffer used by the vector so that it is exactly large
- *              enough to hold all of its elements, without any wasted space. No
- *              data will be lost by calling this function. If the operation
- *              succeeds, returns 0. If the operation fails, returns -1.
+ * Shrink the buffer used by the vector so that it is exactly large enough to
+ * hold all of its elements, without any wasted space. No data will be lost by
+ * calling this function. If the operation succeeds, returns 0. If the operation
+ * fails, returns -1.
  *
- * Arguments:   v   Pointer to the vector to shrink.
+ * \param v Pointer to the vector to shrink.
  *
- * Returns:     Returns a code indicating whether or not the memory allocation
- *              succeeded. If the allocation succeeded, returns 0. It it failed,
- *              returns -1.
+ * \return Returns a code indicating whether or not the memory allocation
+ * succeeded. If the allocation succeeded, returns 0. It it failed, returns -1.
  *
- * Pre:         v != NULL
+ * \pre <tt>v != NULL</tt>
  *
- * Notes:       It is unlikely (impossible?) that reallocating a buffer to a
- *              smaller size will fail, the return value is only included for
- *              completeness.
+ * \note It is unlikely (impossible?) that reallocating a buffer to a smaller
+ * size will fail, the return value is only included for completeness.
  *
- *              Also note that this guarentees that adding another element to
- *              the vector will result in a new memory allocation; calling this
- *              function would thus be wasteful unless you are running low on
- *              memory and you don't need to add anything more to the vector.
- *
- *              This function is a simple wrapper around 'vec_resize', so it can
- *              easily be inlined.
+ * \note Also note that this guarentees that adding another element to the
+ * vector will result in a new memory allocation; calling this function would
+ * thus be wasteful unless you are running low on memory and you don't need to
+ * add anything more to the vector.
  */
 int vec_shrink(struct vector *v);
 
-/*
- * vec_isempty
+/**
+ * \brief Determines if the vector is empty.
  *
- * Description: Determines if the vector is empty. Returns true if the vector is
- *              empty; returns false if it is not empty.
+ * \param v Pointer to the vector to check for emptiness.
  *
- * Arguments:   v   Pointer to the vector to check for emptiness.
+ * \return If the number of elements in the vector is 0, returns true. Else,
+ * returns false.
  *
- * Returns:     If the number of elements in the vector is 0, returns true.
- *              Else, returns false.
- *
- * Pre:         v != NULL
- *
- * Notes:       Uses the traditional 'int' for the boolean, instead defining a
- *              new typedef or using the C99 'stdbool'. Does this for
- *              portability reasons mostly.
- *
- *              This function is very simple; it just compares a member to 0. It
- *              can easily be inlined.
+ * \pre <tt>v != NULL</tt>
  */
 int vec_isempty(const struct vector *v);
 
-/*
- * vec_get
+/**
+ * \brief Gets the element stored at the given index.
  *
- * Description: Gets the elements stored at the given index, and returns it.
- *              Note that no bounds checking is done, so make sure that the
- *              index is valid before calling this function.
+ * Note that no bounds checking is done, so make sure that the index is valid
+ * before calling this function.
  *
- * Arguments:   v   Pointer to the vector to get an element from.
- *              i   Index of the element to get from the vector.
+ * \param v Pointer to the vector to get an element from.
+ * \param i Index of the element to get from the vector.
  *
- * Returns:     Returns the void pointer stored at the given index in the
- *              buffer.
+ * \return Returns the void pointer stored at the given index in the buffer.
  *
- * Pre:         v != NULL
- *              i < vec_size(v)
+ * \pre <tt>v != NULL</tt>
+ * \pre <tt>i < vec_size(v)</tt>
  *
- * Notes:       Be careful with this function. No bounds checking is done on the
- *              argument, so the returned data might be garbage if the index is
- *              out of range. Using an out of range index probably won't
- *              segfault, so make sure to bounds check before calling this.
- *
- *              This function is really simple, just gets an element from the
- *              buffer. It can probably be inlined.
+ * \note Be careful with this function. No bounds checking is done on the
+ * argument, so the returned data might be garbage if the index is out of range.
+ * Using an out of range index probably won't segfault, so make sure to bounds
+ * check before calling this.
  */
 void *vec_get(const struct vector *v, unsigned int i);
 
-/*
- * vec_set
+/**
+ * \brief Set the element at the given index to the new value.
  *
- * Description: Set the element at the given index to the new value. This does
- *              not add a new element to the vector, it just modifies an
- *              existing element. However, no bounds checking is done by this
- *              function, so make sure the index is valid before calling this.
+ * This does not add a new element to the vector, it just modifies an existing
+ * element. However, no bounds checking is done by this function, so make sure
+ * the index is valid before calling this.
  *
- * Arguments:   v   Pointer to the vector in which to modify an element.
- *              i   Index of the element to modify.
- *              e   New element value to store at the given index.
+ * \param v Pointer to the vector in which to modify an element.
+ * \param i Index of the element to modify.
+ * \param e New element value to store at the given index.
  *
- * Pre:         v != NULL
- *              i < vec_size(v)
+ * \pre <tt>v != NULL</tt>
+ * \pre <tt>i < vec_size(v)</tt>
  *
- * Notes:       This does not do any bounds checking, which can lead to bad
- *              behavior if the passed index is beyond the bounds of the buffer.
- *              Make sure to do bounds checking before calling this function.
+ * \note This does not do any bounds checking, which can lead to bad behavior if
+ * the passed index is beyond the bounds of the buffer.  Make sure to do bounds
+ * checking before calling this function.
  *
- *              Also note that the pointer at the given index will be
- *              overwritten; if there is unfreed memory there, make sure to
- *              'vec_get' the element before calling this function, or the
- *              pointer will be lost forever.
- *
- *              This function is very simple (just stores a pointer in the
- *              buffer). It can easily be inlined.
+ * \note Also note that the pointer at the given index will be overwritten; if
+ * there is unfreed memory there, make sure to #vec_get() the element before
+ * calling this function, or the pointer will be lost forever.
  */
 void vec_set(struct vector *v, unsigned int i, void *e);
 
-/*
- * vec_head
+/**
+ * \brief Get the first element in the vector, or \c NULL is the vector is
+ * empty.
  *
- * Description: Get the first element in the vector, or NULL is the vector is
- *              empty. This will explicitly check that the vector is not empty
- *              before returning, so there is no way for this function to return
- *              garbage.
+ * This will explicitly check that the vector is not empty before returning, so
+ * there is no way for this function to return garbage.
  *
- * Arguments:   v   Pointer to the vector from which to get the head.
+ * \param v Pointer to the vector from which to get the head.
  *
- * Returns:     If the vector is not empty, returns the void pointer stored at
- *              index 0 in the vector. If the vector is empty, returns NULL.
+ * \return If the vector is not empty, returns the void pointer stored at index
+ * 0 in the vector. If the vector is empty, returns \c NULL.
  *
- * Pre:         v != NULL
+ * \pre <tt>v != NULL</tt>
  *
- * Notes:       This function will do bounds checking; that is, it will
- *              explicitly check that the vector is not empty before getting the
- *              element. Make sure to check for a NULL pointer returned from
- *              this function, indicating the vector is empty.
+ * \note This function will do bounds checking; that is, it will explicitly
+ * check that the vector is not empty before getting the element. Make sure to
+ * check for a \c NULL pointer returned from this function, indicating the
+ * vector is empty.
  */
 void *vec_head(const struct vector *v);
 
-/*
- * vec_tail
+/**
+ * \brief Get the last (highest indexed) element in the vector, or \c NULL if
+ * the vector is empty.
  *
- * Description: Get the last (highest indexed) element in the vector, or NULL if
- *              the vector is empty. This function does explicit bounds
- *              checking, so it will never return garbage from a valid vector.
+ * This function does explicit bounds checking, so it will never return garbage
+ * from a valid vector.
  *
- * Arguments:   v   Pointer to the vector from which to get the last element.
+ * \param v Pointer to the vector from which to get the last element.
  *
- * Returns:     Returns the last valid element in the vector. This is the
- *              element stored in the buffer with the highest index. If the
- *              vector is empty, returns NULL.
+ * \return Returns the last valid element in the vector. This is the element
+ * stored in the buffer with the highest index. If the vector is empty, returns
+ * \c NULL.
  *
- * Pre:         v != NULL
+ * \pre <tt>v != NULL</tt>
  *
- * Notes:       Does explicit bounds checking, so make sure to check for a NULL
- *              return value if the vector is empty.
+ * \note Does explicit bounds checking, so make sure to check for a \c NULL
+ * return value if the vector is empty.
  */
 void *vec_tail(const struct vector *v);
 
-/*
- * vec_push
+/**
+ * \brief Adds a new element to the end of the vector.
  *
- * Description: Adds a new element to the end of the vector. The new element
- *              will be at the highest index of the vector. If there is not
- *              enough space in the buffer for the new element, then the buffer
- *              will be resized so the new element will fit. If this resize
- *              fails (i.e. failed memory allocation), then -1 is returned and
- *              the element is not added; the vector is left unchanged. If the
- *              element is successfully added, then the index of the new element
- *              is returned.
+ * The new element will be at the highest index of the vector. If there is not
+ * enough space in the buffer for the new element, then the buffer will be
+ * resized so the new element will fit. If this resize fails (i.e. failed memory
+ * allocation), then -1 is returned and the element is not added; the vector is
+ * left unchanged. If the element is successfully added, then the index of the
+ * new element is returned.
  *
- * Arguments:   v   Pointer to the vector to which to add an element.
- *              e   Element to add to the end of the vector.
+ * \param v Pointer to the vector to which to add an element.
+ * \param e Element to add to the end of the vector.
  *
- * Returns:     If the element is successfully added, returns the index of the
- *              new element. If the vector needs to be resized to fit the
- *              element, and the resize fails, returns -1.
+ * \return If the element is successfully added, returns the index of the new
+ * element. If the vector needs to be resized to fit the element, and the resize
+ * fails, returns -1.
  *
- * Pre:         v != NULL
+ * \pre <tt>v != NULL</tt>
  *
- * Notes:       The state of the vector is not changed if the resize operation
- *              fails. Also note that the returned index is signed, whereas it
- *              should normally be an unsigned number for the other vector
- *              operations.
+ * \note The state of the vector is not changed if the resize operation fails.
+ * Also note that the returned index is signed, whereas it should normally be an
+ * unsigned number for the other vector operations.
  */
 int vec_push(struct vector *v, void *e);
 
-/*
- * vec_pop
+/**
+ * \brief Removes the last (highest indexed) element from the vector, returning
+ * its value.
  *
- * Description: Removes the last (highest indexed) element from the vector,
- *              returning its value. If the vector is empty, returns NULL and
- *              does not change the state of the vector. Note that the vector
- *              will not be resized, no matter how many elements are popped,
- *              unless 'vec_shrink' is called.
+ * If the vector is empty, returns \c NULL and does not change the state of the
+ * vector. Note that the vector will not be resized, no matter how many elements
+ * are popped, unless #vec_shrink() is called.
  *
- * Arguments:   v   Pointer to the vector from which to pop an element.
+ * \param v Pointer to the vector from which to pop an element.
  *
- * Returns:     Returns the tail of the vector. This is the element in the
- *              buffer with the highest index.
+ * \return Returns the tail of the vector. This is the element in the buffer
+ * with the highest index.
  *
- * Pre:         v != NULL
+ * \pre <tt>v != NULL</tt>
  *
- * Notes:       Make sure to check for a NULL return value if the vector is
- *              empty. If you want to reclaim memory after a lot of elements are
- *              popped, call the 'vec_shrink' function.
+ * \note Make sure to check for a \c NULL return value if the vector is empty.
+ * If you want to reclaim memory after a lot of elements are popped, call the
+ * #vec_shrink() function.
  */
 void *vec_pop(struct vector *v);
 
-/*
- * vec_delete
+/**
+ * \brief Deletes an element from the vector.
  *
- * Description: Deletes an element from the vector. This function will remove
- *              the element at the given index from the vector, returning the
- *              element so that it is not lost. This operation will then shift
- *              the buffer to overwrite the deleted element. This shift is
- *              needed in order to keep the vector dense while preserving the
- *              order of the elements. Note that this will change the index of
- *              every element after the given element. If the given index was
- *              not valid (i.e. it is too large), then NULL is returned and the
- *              vector is unchanged.
+ * This function will remove the element at the given index from the vector,
+ * returning the element so that it is not lost. This operation will then shift
+ * the buffer to overwrite the deleted element. This shift is needed in order to
+ * keep the vector dense while preserving the order of the elements. Note that
+ * this will change the index of every element after the given element. If the
+ * given index was not valid (i.e. it is too large), then \c NULL is returned
+ * and the vector is unchanged.
  *
- * Arguments:   v   Pointer to the vector from which to delete an element.
- *              i   Index of the element to delete.
+ * \param v Pointer to the vector from which to delete an element.
+ * \param i Index of the element to delete.
  *
- * Returns:     Returns the deleted element, or NULL if the given index was out
- *              of range.
+ * \return Returns the deleted element, or \c NULL if the given index was out of
+ * range.
  *
- * Pre:         v != NULL
- *              i < vec_size(v);
+ * \pre <tt>v != NULL</tt>
+ * \pre <tt>i < vec_size(v)</tt>
  *
- * Notes:       This is a slow and ugly function because of the large memory
- *              movement. It also messes with the indices of the vector in order
- *              to keep it dense and ordered. You probably shouldn't use this
- *              function unless you really have to.
+ * \note This is a slow and ugly function because of the large memory movement.
+ * It also messes with the indices of the vector in order to keep it dense and
+ * ordered. You probably shouldn't use this function unless you really have to.
  */
 void *vec_delete(struct vector *v, unsigned int i);
 
-/*
- * vec_map
+/**
+ * \brief Apply an operator to each element in a vector.
  *
- * Description: Apply an operator to each element in a vector. Replace each
- *              element with the return value from the operator. The operator
- *              takes the element, its index, and a scratch pointer as
- *              arguments. This can be used to implement a wide range of
- *              iterators over the vector.
+ * Replace each element with the return value from the operator. The operator
+ * takes the element, its index, and a scratch pointer as arguments. This can be
+ * used to implement a wide range of iterators over the vector.
  *
- * Arguments:   v       Pointer to the vector to iterate over.
- *              op      Operation to perform on each element.
- *              scratch Scratch pointer to pass as an argument to the operation.
+ * \param v Pointer to the vector to iterate over.
+ * \param op Operation to perform on each element.
+ * \param scratch Scratch pointer to pass as an argument to the operation.
  *
- * Pre:         v != NULL
+ * \pre <tt>v != NULL</tt>
  *
- * Notes:       This is the preferred way of iterating over the vector, as using
- *              this does not make assumptions about the internals of the
- *              vector. See the documentation for the VecOperator type for more
- *              information about the format of the operator.
+ * \note This is the preferred way of iterating over the vector, as using this
+ * does not make assumptions about the internals of the vector. See the
+ * documentation for the \c VecOperator type for more information about the
+ * format of the operator.
  */
 void vec_map(struct vector *v, VecOperator op, void *scratch);
 
-/*
- * vec_sort
+/**
+ * \brief Sorts the data in the vector according to the given comparison
+ * function.
  *
- * Description: Sorts the data in the vector according to the given comparison
- *              function. The vector will be sorted in ascending order according
- *              to the compare function. The compare function should return a
- *              value less than, equal to, or greater than zero if the firt
- *              argument is less than, equal to, or greater than the second
- *              argument, respectively.
+ * The vector will be sorted in ascending order according to the compare
+ * function. The compare function should return a value less than, equal to, or
+ * greater than zero if the firt argument is less than, equal to, or greater
+ * than the second argument, respectively.
  *
- * Arguments:   v       Pointer to the vector to sort.
- *              compar  Comparison function taking as arguments pointers to
- *                      elements in the vector, returning a value indicating the
- *                      ordering of the elements.
+ * \param v Pointer to the vector to sort.
+ * \param compar Comparison function taking as arguments pointers to elements in
+ *        the vector, returning a value indicating the ordering of the elements.
  *
- * Pre:         v != NULL
+ * \pre <tt>v != NULL</tt>
  *
- * Notes:       Uses the underlying 'qsort' function in the standard library.
- *              The 'vec_sort' function is just a wrapper around this call, so
- *              it can probably be inlined.
+ * \note Uses the underlying #qsort() function in the standard library. The
+ * #vec_sort() function is just a wrapper around this call, so it can probably
+ * be inlined.
  *
- *              Be careful with the 'compar' argument. The arguments are of type
- *              'void *', but these are pointers to the elements in the vector.
- *              So they are really 'void **'.
+ * \note Be careful with the \p compar argument. The arguments are of type
+ * <tt>void *</tt>, but these are pointers to the elements in the vector. So
+ * they are really <tt>void **</tt>.
  */
 void vec_sort(struct vector *v, int (*compar)(const void *, const void *));
 
-/*
- * vec_swap
+/**
+ * \brief Swap two elements in the vector.
  *
- * Description: Swap two elements in the vector. This will set the value at
- *              index 'i' to the value at index 'j', and vice versa.
+ * This will set the value at index \p i to the value at index \p j, and vice
+ * versa.
  *
- * Arguments:   v   Pointer to the vector in which to switch elements.
- *              i   Index of the first element to swap.
- *              j   Index of the second element to swap.
+ * \param v Pointer to the vector in which to switch elements.
+ * \param i Index of the first element to swap.
+ * \param j Index of the second element to swap.
  *
- * Pre:         v != NULL
- *              i < vec_size(v)
- *              j < vec_size(v)
+ * \pre <tt>v != NULL</tt>
+ * \pre <tt>i < vec_size(v)</tt>
+ * \pre <tt>j < vec_size(v)</tt>
  *
- * Notes:       Swaps using a temporary variable.
+ * \note Swaps using a temporary variable.
  */
 void vec_swap(struct vector *v, unsigned int i, unsigned int j);
 
