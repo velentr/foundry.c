@@ -319,7 +319,8 @@ static int _checkheap(const struct binheap *bh)
  * Initialize the binary heap so that it is empty and ready to use. Store the
  * comparison function in the structure and initialize the vector.
  */
-int bheap_init(struct binheap *bh, HeapCompare cmp, size_t size)
+int bheap_init(struct binheap *bh, HeapCompare cmp, size_t size,
+        void *(*alloc)(void *, size_t))
 {
     assert(bh != NULL);
     assert(cmp != NULL);
@@ -329,7 +330,7 @@ int bheap_init(struct binheap *bh, HeapCompare cmp, size_t size)
 
     /* Initialize the vector. Note that the size argument can be passed
      * directly, and the return value can be returned from here. */
-    return vec_init(&(bh->vec), size);
+    return vec_init(&(bh->vec), size, alloc);
 }
 
 /*

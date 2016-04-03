@@ -107,7 +107,7 @@ static int _checkspace(struct vector *v);
  * the data. The size can be specified using the 'size' argument; if 0 is
  * passed, then the default size 'DEF_VEC_SIZE' will be used.
  */
-int vec_init(struct vector *v, size_t size)
+int vec_init(struct vector *v, size_t size, void *(*alloc)(void *, size_t))
 {
     assert(v != NULL);
 
@@ -156,6 +156,19 @@ int vec_init(struct vector *v, size_t size)
     v->data = NULL;
 
     /*
+     * If no allocator is provided, just use 'realloc' from the standard
+     * library.
+     */
+    if (alloc == NULL)
+    {
+        v->realloc = realloc;
+    }
+    else
+    {
+        v->realloc = alloc;
+    }
+
+    /*
      * The 'vec_resize' function will check for allocation errors. This saves a
      * little bit of repeated code.
      */
@@ -202,12 +215,12 @@ unsigned int vec_space(const struct vector *v)
 
 /*
  * Resize the vector to the given size. Note that the passed size is in bytes.
- * This is implemented using realloc, so if the buffer is NULL, this acts like
- * malloc. If the size is 0, then this acts like free. The return code is 0 if
- * the call succeeds, or -1 if the memory allocation fails.
+ * This is implemented using a realloc-equivalent function, so if the buffer is
+ * NULL, this acts like malloc. If the size is 0, then this acts like free. The
+ * return code is 0 if the call succeeds, or -1 if the memory allocation fails.
  *
- * NOTE THAT ALL MEMORY MANAGEMENT SHOULD BE DONE THROUGH THIS FUNCTION, for the
- * sake of simplicity.
+ * NOTE THAT ALL MEMORY MANAGEMENT SHOULD BE DONE THROUGH THIS FUNCTION, so that
+ * we don't have to worry about which allocator is used anywhere else.
  */
 int vec_resize(struct vector *v, size_t size)
 {
@@ -218,7 +231,7 @@ int vec_resize(struct vector *v, size_t size)
 
     assert(v != NULL);
 
-    blk = (void *)realloc(v->data, size);   /* Try to allocate a new buffer. */
+    blk = (void *)v->realloc(v->data, size);
 
     /*
      * Check to see if the allocation succeeded. If it failed, need to return -1

@@ -156,6 +156,9 @@ struct binheap
  *        is smaller.
  * \param size Initial value for the number of bytes in the vector. If this
  *             argument is \c 0, then the default size is used.
+ * \param alloc Memory allocator used for preforming all allocation for the
+ *              binary heap. Interface should be equivalent to \c realloc.
+ *              Should be set to \c NULL to use the default allocator.
  *
  * \return If memory is successfully allocated for the vector, returns \c 0. If
  * the memory allocation fails, returns \c -1.
@@ -168,7 +171,8 @@ struct binheap
  * given in bytes, not number of elements. To get the size for a vector with \c
  * n elements, pass <tt>n * BHEAP_ELEMSIZE</tt>.
  */
-int bheap_init(struct binheap *bh, HeapCompare cmp, size_t size);
+int bheap_init(struct binheap *bh, HeapCompare cmp, size_t size,
+        void *(*alloc)(void *, size_t));
 
 /**
  * \brief Free all the dynamically-allocated memory associated with the given

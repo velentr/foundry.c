@@ -99,6 +99,7 @@ struct vector
     unsigned int space; /**< Number of elements that can currently fit in the
                              allocated memory. */
     void **data;        /**< Dynamically-allocated array for holding data. */
+    void *(*realloc)(void *, size_t); /**< Allocator for getting more memory. */
 };
 
 
@@ -143,6 +144,9 @@ typedef void *(*VecOperator)(void *e, unsigned int i, void *scr);
  * \param size Initial value for the number of bytes in the vector. If this
  *        argument is \c 0, then the default size will be used.  It is important
  *        to note that this is the number bytes, not the number of elements.
+ * \param alloc Memory allocator used for performing all allocation for the
+ *        vector. Interface should be equivalent to \c realloc. Should be set to
+ *        \c NULL to use the default allocator.
  *
  * \return If the memory is successfully allocated, returns \c 0. If the memory
  *         allocation fails, returns \c -1.
@@ -157,7 +161,7 @@ typedef void *(*VecOperator)(void *e, unsigned int i, void *scr);
  * \note Also, it is the size in bytes, not the number of elements. To get the
  *       size for a vector with \c n elements, pass <tt>n * VEC_ELEMSIZE</tt>.
  */
-int vec_init(struct vector *v, size_t size);
+int vec_init(struct vector *v, size_t size, void *(*alloc)(void *, size_t));
 
 /**
  * \brief Free all the memory associated with the vector.
@@ -233,7 +237,7 @@ unsigned int vec_space(const struct vector *v);
  *
  * \note If the passed size is \c 0, then the buffer will be freed. If the
  * buffer inside the vector is \c NULL, then a new buffer will be allocated
- * automatically.  These are side effects of the #realloc() library function
+ * automatically.  These are side effects of the \c realloc() library function
  * being used.
  *
  * \note Note that if the size is too small to hold all the elements currently
@@ -464,7 +468,7 @@ void vec_map(struct vector *v, VecOperator op, void *scratch);
  *
  * The vector will be sorted in ascending order according to the compare
  * function. The compare function should return a value less than, equal to, or
- * greater than zero if the firt argument is less than, equal to, or greater
+ * greater than zero if the first argument is less than, equal to, or greater
  * than the second argument, respectively.
  *
  * \param v Pointer to the vector to sort.
@@ -473,7 +477,7 @@ void vec_map(struct vector *v, VecOperator op, void *scratch);
  *
  * \pre <tt>v != NULL</tt>
  *
- * \note Uses the underlying #qsort() function in the standard library. The
+ * \note Uses the underlying \c qsort() function in the standard library. The
  * #vec_sort() function is just a wrapper around this call, so it can probably
  * be inlined.
  *
