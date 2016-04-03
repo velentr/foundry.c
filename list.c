@@ -48,6 +48,8 @@ void list_init(struct list *l)
 /* Get the first element of the list, for iteration. */
 struct list_elem *list_begin(struct list *l)
 {
+    assert(l != NULL);
+
     /* When iterating forwards, the beginning is the first valid (non-sentinal
      * element in the list. */
     return list_head(l);
@@ -110,20 +112,22 @@ void list_insert(struct list_elem *old, struct list_elem *new)
 }
 
 /* Insert the given element at the front of the list. */
-void list_pushfront(struct list *l, struct list_elem *new)
+void list_pushfront(struct list *l, struct list_elem *e)
 {
     assert(l != NULL);
+    assert(e != NULL);
 
-    list_insert(&l->sentinal, new);
+    list_insert(&l->sentinal, e);
 }
 
 /* Insert the given element at the back of the list. */
-void list_pushback(struct list *l, struct list_elem *new)
+void list_pushback(struct list *l, struct list_elem *e)
 {
     assert(l != NULL);
     assert(l->sentinal.prev != NULL);
+    assert(e != NULL);
 
-    list_insert(l->sentinal.prev, new);
+    list_insert(l->sentinal.prev, e);
 }
 
 /* Remove the given element from its list. */
@@ -143,6 +147,7 @@ struct list_elem *list_popfront(struct list *l)
 {
     struct list_elem *e;
 
+    assert(l != NULL);
     assert(!list_empty(l));
 
     /* Get the first element and remove it. */
@@ -155,6 +160,7 @@ struct list_elem *list_popback(struct list *l)
 {
     struct list_elem *e;
 
+    assert(l != NULL);
     assert(!list_empty(l));
 
     /* Get the last element and remove it. */
@@ -167,6 +173,8 @@ size_t list_size(struct list *l)
 {
     struct list_elem *e;
     size_t num = 0;
+
+    assert(l != NULL);
 
     /* Iterate over all the elements in the list. */
     for (e = list_begin(l); e != list_end(l); e = list_next(e))

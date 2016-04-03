@@ -95,6 +95,8 @@ struct list
  * This function should be called before any other functions can be used.
  *
  * \param l Pointer to the linked list to initialize.
+ *
+ * \pre <tt>l != NULL</tt>
  */
 void list_init(struct list *l);
 
@@ -113,6 +115,8 @@ void list_init(struct list *l);
  *
  * \param l Pointer to the linked list to start iterating over.
  *
+ * \pre <tt>l != NULL</tt>
+ *
  * \return Returns the first element in the linked list \p l.
  */
 struct list_elem *list_begin(struct list *l);
@@ -124,6 +128,8 @@ struct list_elem *list_begin(struct list *l);
  * #list_begin() to see how to iterate over the entire list.
  *
  * \param e Pointer to the current element in the list.
+ *
+ * \pre <tt>e != NULL</tt>
  *
  * \return Returns a pointer to the next element in the list.
  */
@@ -137,6 +143,8 @@ struct list_elem *list_next(struct list_elem *e);
  * list.
  *
  * \param e Pointer to the current element in the list.
+ *
+ * \pre <tt>e != NULL</tt>
  *
  * \return Returns a pointer to the previous element in the list.
  */
@@ -153,6 +161,8 @@ struct list_elem *list_prev(struct list_elem *e);
  * \param l Pointer to the linked list for which to get the end-of-list
  *          indicator.
  *
+ * \pre <tt>l != NULL</tt>
+ *
  * \return Returns a pointer that indicates the end of the list has been
  *         reached.
  */
@@ -163,6 +173,8 @@ struct list_elem *list_end(struct list *l);
  *
  * \param l Pointer to the linked list to get the first element from.
  *
+ * \pre <tt>l != NULL</tt>
+ *
  * \return Returns a pointer to the first element of \p l.
  */
 struct list_elem *list_head(struct list *l);
@@ -171,6 +183,8 @@ struct list_elem *list_head(struct list *l);
  * \brief Get the last element from the list.
  *
  * \param l Pointer to the linked list to get the last element from.
+ *
+ * \pre <tt>l != NULL</tt>
  *
  * \return Returns a pointer to the last element of \p l.
  */
@@ -188,6 +202,9 @@ struct list_elem *list_tail(struct list *l);
  *
  * \param old Pointer to a list element after which to insert \p new.
  * \param new Pointer to a list element to add to the list containing \p old.
+ *
+ * \pre <tt>old != NULL</tt>
+ * \pre <tt>new != NULL</tt>
  */
 void list_insert(struct list_elem *old, struct list_elem *new);
 
@@ -200,6 +217,9 @@ void list_insert(struct list_elem *old, struct list_elem *new);
  *
  * \param l Pointer to the list where \p e will be pushed.
  * \param e Pointer to the element to add to the front of \p l.
+ *
+ * \pre <tt>l != NULL</tt>
+ * \pre <tt>e != NULL</tt>
  */
 void list_pushfront(struct list *l, struct list_elem *e);
 
@@ -212,6 +232,9 @@ void list_pushfront(struct list *l, struct list_elem *e);
  *
  * \param l Pointer to the list where \p e will be pushed.
  * \param e Pointer to the element to add to the end of \p l.
+ *
+ * \pre <tt>l != NULL</tt>
+ * \pre <tt>e != NULL</tt>
  */
 void list_pushback(struct list *l, struct list_elem *e);
 
@@ -225,6 +248,8 @@ void list_pushback(struct list *l, struct list_elem *e);
  * in a list.
  *
  * \param e Element to remove from the list.
+ *
+ * \pre <tt>e != NULL</tt>
  *
  * \return Returns \p e. This is used for convenience in the internal
  *         implementation.
@@ -242,6 +267,9 @@ struct list_elem *list_remove(struct list_elem *e);
  *
  * \param l Pointer to the list from which to pop the first element.
  *
+ * \pre <tt>l != NULL</tt>
+ * \pre <tt>!list_empty(l)</tt>
+ *
  * \return Returns a pointer to the element that was popped from \p l.
  */
 struct list_elem *list_popfront(struct list *l);
@@ -257,6 +285,9 @@ struct list_elem *list_popfront(struct list *l);
  *
  * \param l Pointer to the list from which to pop the last element.
  *
+ * \pre <tt>l != NULL</tt>
+ * \pre <tt>!list_empty(l)</tt>
+ *
  * \return Returns a pointer to the element that was popped from \p l.
  */
 struct list_elem *list_popback(struct list *l);
@@ -271,6 +302,8 @@ struct list_elem *list_popback(struct list *l);
  *
  * \param l Pointer to the list of which to get the size.
  *
+ * \pre <tt>l != NULL</tt>
+ *
  * \return Returns the number of elements in \p l.
  */
 size_t list_size(struct list *l);
@@ -283,10 +316,13 @@ size_t list_size(struct list *l);
  *
  * \param l Pointer to the list on which to determine emptyness.
  *
+ * \pre <tt>l != NULL</tt>
+ *
  * \return Returns false if the list contains any elements. Returns true if
  *         there are no elements in the list.
  */
 int list_empty(struct list *l);
+
 
 #endif /* end of include guard: _LIST_H_ */
 
