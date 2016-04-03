@@ -1,16 +1,14 @@
-# Datastructures
+# Foundry.c
 
-Code for reusable data structures in C. The end goal of this repo is to have
-some commonly used, well-tested, and well-documented data structures for use in
-C. I have elected to write fast, efficient implementations, rather than trying
-to catch any errors made from improper use of the interface.
+Reusable code for various data structures and algorithms in C. This repo is
+intended to give C programmers a library of generic data structures and
+algorithms that can be reused across projects, similar to STL.
 
-Right now, all needed documentation is inside the header files for each
-data structure (I'll probably organize this better later).
+## Data Structures
 
-Currently, I have completed and tested the following data structures:
+The following data structures have been written:
 
- - `vector` : Dynamically-resizable arrays, similar to the vectors in STL.
+ - `vector` : Dynamically-resizable arrays.
  - `binheap` : Binary min-heap, implemented using a vector.
  - `list` : Doubly-linked list without any dynamic memory allocation.
 
