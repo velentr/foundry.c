@@ -39,37 +39,19 @@
  * gaps in between the valid elements in the vector. Also note that the order of
  * the elements within the vector is guarenteed to be constant, while the
  * indices are subject to change (e.g. if an element is deleted).
- *
- * Functions:
- *      vec_shrink      Shrink the vector so that it contains the absolute
- *                      minimum amount of memory needed to store all the
- *                      elements.
- *      vec_isempty     Determines if the vector is empty (does not contain any
- *                      elements).
- *      vec_get         Get the element at the given index.
- *      vec_set         Set the element at the given index to the given value.
- *      vec_head        Get the first element in the vector.
- *      vec_tail        Get the last element in the vector.
- *      vec_push        Add an element to the end of the vector.
- *      vec_pop         Remove an element from the end of the vector.
- *      vec_delete      Get the element at the given index, and remove it from
- *                      the vector.
- *      vec_map         Apply a function to each element in the vector.
- *      vec_sort        Sort the data in the vector.
- *      vec_swap        Swap two elements in the vector.
  */
 
 #ifndef _VECTOR_H_
 #define _VECTOR_H_
 
 
-/*
+/**
  * Used as the default size for a new vector if a size is not specified in the
  * init function.
  */
 #define DEF_VEC_SIZE    32
 
-/*
+/**
  * Defines the size of each element in the vector. Useful when converting
  * between number of bytes and number of elements.
  */
@@ -111,7 +93,8 @@
  * #vec_free() has been called on the vector, then it should no longer be used,
  * unless #vec_init() is called on it again.
  */
-struct vector {
+struct vector
+{
     unsigned int size;  /**< Count of the number of elements in the vector. */
     unsigned int space; /**< Number of elements that can currently fit in the
                              allocated memory. */
@@ -169,7 +152,7 @@ typedef void *(*VecOperator)(void *e, unsigned int i, void *scr);
  * \note The \p size argument shouldn't generally be used unless there is a
  *       specific reason to limit the size of the vector (or if the needed size
  *       of the vector is known beforehand). It should only be used when extreme
- *       performance is needed; you should probably just pass 0.
+ *       performance is needed; you should probably just pass \c 0.
  *
  * \note Also, it is the size in bytes, not the number of elements. To get the
  *       size for a vector with \c n elements, pass <tt>n * VEC_ELEMSIZE</tt>.
@@ -235,21 +218,21 @@ unsigned int vec_space(const struct vector *v);
  * This will be called automatically when needed, so it generally does not need
  * to be called by the user. The buffer of the given vector is reallocated to
  * the given size (in bytes).  Returns a flag indicating if the operation
- * succeeded or not. If the memory allocation failed, returns -1. If the
- * allocation succeeded, returns 0. Note that this does not check to make sure
- * that the current elements of the buffer will fit in the new size; shrinking
- * it too much will result in data loss.
+ * succeeded or not. If the memory allocation failed, returns \c -1. If the
+ * allocation succeeded, returns \c 0. Note that this does not check to make
+ * sure that the current elements of the buffer will fit in the new size;
+ * shrinking it too much will result in data loss.
  *
  * \param v Pointer to the vector that needs to be resized.
  * \param size The new size for the buffer in bytes.
  *
- * \return If the memory allocation succeeds, returns 0. If the allocation
- * fails, returns -1.
+ * \return If the memory allocation succeeds, returns \c 0. If the allocation
+ * fails, returns \c -1.
  *
  * \pre <tt>v != NULL</tt>
  *
- * \note If the passed size is 0, then the buffer will be freed. If the buffer
- * inside the vector is \c NULL, then a new buffer will be allocated
+ * \note If the passed size is \c 0, then the buffer will be freed. If the
+ * buffer inside the vector is \c NULL, then a new buffer will be allocated
  * automatically.  These are side effects of the #realloc() library function
  * being used.
  *
@@ -264,13 +247,14 @@ int vec_resize(struct vector *v, size_t size);
  *
  * Shrink the buffer used by the vector so that it is exactly large enough to
  * hold all of its elements, without any wasted space. No data will be lost by
- * calling this function. If the operation succeeds, returns 0. If the operation
- * fails, returns -1.
+ * calling this function. If the operation succeeds, returns \c 0. If the
+ * operation fails, returns \c -1.
  *
  * \param v Pointer to the vector to shrink.
  *
  * \return Returns a code indicating whether or not the memory allocation
- * succeeded. If the allocation succeeded, returns 0. It it failed, returns -1.
+ * succeeded. If the allocation succeeded, returns \c 0. It it failed, returns
+ * \c -1.
  *
  * \pre <tt>v != NULL</tt>
  *
@@ -289,7 +273,7 @@ int vec_shrink(struct vector *v);
  *
  * \param v Pointer to the vector to check for emptiness.
  *
- * \return If the number of elements in the vector is 0, returns true. Else,
+ * \return If the number of elements in the vector is \c 0, returns true. Else,
  * returns false.
  *
  * \pre <tt>v != NULL</tt>
@@ -351,7 +335,7 @@ void vec_set(struct vector *v, unsigned int i, void *e);
  * \param v Pointer to the vector from which to get the head.
  *
  * \return If the vector is not empty, returns the void pointer stored at index
- * 0 in the vector. If the vector is empty, returns \c NULL.
+ * \c 0 in the vector. If the vector is empty, returns \c NULL.
  *
  * \pre <tt>v != NULL</tt>
  *
@@ -388,16 +372,16 @@ void *vec_tail(const struct vector *v);
  * The new element will be at the highest index of the vector. If there is not
  * enough space in the buffer for the new element, then the buffer will be
  * resized so the new element will fit. If this resize fails (i.e. failed memory
- * allocation), then -1 is returned and the element is not added; the vector is
- * left unchanged. If the element is successfully added, then the index of the
- * new element is returned.
+ * allocation), then \c -1 is returned and the element is not added; the vector
+ * is left unchanged. If the element is successfully added, then the index of
+ * the new element is returned.
  *
  * \param v Pointer to the vector to which to add an element.
  * \param e Element to add to the end of the vector.
  *
  * \return If the element is successfully added, returns the index of the new
  * element. If the vector needs to be resized to fit the element, and the resize
- * fails, returns -1.
+ * fails, returns \c -1.
  *
  * \pre <tt>v != NULL</tt>
  *

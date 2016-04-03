@@ -24,15 +24,14 @@
 
 
 
-/*
- * binheap.h
+/**
+ * \file binheap.h
  *
- * Arbitrarily large binary heaps, public interface.
+ * \brief Arbitrarily large binary heaps.
  *
- * This file contains the public interface for a binary heap. The interface is
- * sufficient for creating a priority queue with the heap. In many cases, this
- * implementation optimizes for speed rather than checking input; garbage in,
- * garbage out.
+ * Implements a binary heap. The interface is sufficient for creating a priority
+ * queue with the heap. In many cases, this implementation optimizes for speed
+ * rather than checking input; garbage in, garbage out.
  *
  * These operations will gurentee the heap property on the binary heap. That is,
  * the heap is a complete binary tree, possibly excluding the last level. In
@@ -40,16 +39,7 @@
  * to the given comparison function; this makes the heap into a min heap. If a
  * max heap is desired, negate the value returned by the compare function.
  *
- * Constants:
- *      DEF_BHEAP_SIZE  The default size for a binary heap, if no size is given
- *                      on initialization.
- *      BHEAP_ELEMSIZE  The size of each element in the binary heap.
- *
  * Datatypes:
- *      HeapCompare     Function that compares two elements in the heap. Returns
- *                      a value less than, equal to, or greater than zero if the
- *                      first element is less than, equal to, or greater than
- *                      the second element, respectively.
  *      struct binheap  Heap datastructure implemented using a complete binary
  *                      tree where both child nodes are less than the parent.
  *                      The implementation is thus a minheap. Uses a vector for
@@ -74,18 +64,18 @@
 #ifndef _BINHEAP_H_
 #define _BINHEAP_H_
 
-/*
+/**
  * Need to use the vector for internal storage on the binary heap.
  */
 #include "vector.h"
 
-/*
+/**
  * Used as the default size for a new binary heap, if a size is not specified in
  * the init function. Right now, just uses the default vector size.
  */
 #define DEF_BHEAP_SIZE  DEF_VEC_SIZE
 
-/*
+/**
  * Defines the size of each element in the binary heap. Since a vector is used
  * for the storage, then this is just the element size for the vector.
  */
@@ -93,259 +83,225 @@
 
 
 
-/*
- * HeapCompare
+/**
+ * \brief Pointer to a function that is used for comparing two items on a heap.
  *
- * Description: This is a pointer to a function that is used for comparing two
- *              items on a heap. The function should compare the two elements
- *              and return a number less than, equal to, or greater than zero if
- *              the first element is respectively less than, equal to, or
- *              greater than the second element. The magnitude of the return
- *              value does not matter, just the sign.
+ * The function should compare the two elements and return a number less than,
+ * equal to, or greater than zero if the first element is respectively less
+ * than, equal to, or greater than the second element. The magnitude of the
+ * return value does not matter, just the sign.
  *
- * Arguments:   a   The first element to compare.
- *              b   The second element to compare.
+ * \param a The first element to compare.
+ * \param b The second element to compare.
  *
- * Returns:     Returns an integer that is used to determine which element is
- *              smaller, for sorting in the heap. Returns less than, equal to,
- *              or greater than zero if the first argument is respectively less
- *              than, equal to, or greater than the second argument.
+ * \return Returns an integer that is used to determine which element is
+ * smaller, for sorting in the heap. Returns less than, equal to, or greater
+ * than zero if the first argument is respectively less than, equal to, or
+ * greater than the second argument.
  *
- * Notes:       Generally, a function pointer like this should have a scratch
- *              argument so global variables are not needed. However, in a heap,
- *              there should not be any global state that affects the sorting
- *              order, so a scratch argument shouldn't be necessary in this
- *              case.
+ * \note Generally, a function pointer like this should have a scratch argument
+ * so global variables are not needed. However, in a heap, there should not be
+ * any global state that affects the sorting order, so a scratch argument
+ * shouldn't be necessary in this case.
  */
 typedef int (*HeapCompare)(const void *a, const void *b);
 
-/*
- * struct binheap
+/**
+ * \brief Memory for storing a binary heap.
  *
- * Description: This structure contains all the variables needed for storing a
- *              binary heap. In this heap, the minimum element is sifted to the
- *              top of the heap; that is, this is a minheap. This structure is
- *              usually used for creating a priority queue, where the highest
- *              priority is indicated by the element with the minimum value. If
- *              a maxheap is needed, just negate the output of the compare
- *              function. Since a vector is used for storing the data, the
- *              binary heap will grow arbitrarily large to fit all the elements.
+ * In this heap, the minimum element is sifted to the top of the heap; that is,
+ * this is a minheap. This structure is usually used for creating a priority
+ * queue, where the highest priority is indicated by the element with the
+ * minimum value. If a maxheap is needed, just negate the output of the compare
+ * function. Since a vector is used for storing the data, the binary heap will
+ * grow arbitrarily large to fit all the elements.
  *
- * Members:     cmp     Comparison function used for sorting the elements on the
- *                      heap. See the description of the HeapCompare typedef for
- *                      more information.
- *              vec     Vector holding all the elements in the heap.
+ * When using a binary heap, first call the #bheap_init() function to initialize
+ * the vector and set the comparison function. Then, any of the \c bheap_*
+ * functions can be called to manipulate the binary heap.
  *
- * Usage:       When using a binary heap, first call the 'bheap_init' function
- *              to initialize the vector and set the comparison function. Then,
- *              any of the 'bheap_*' functions can be called to manipulate the
- *              binary heap.
+ * The vector of the heap should never be accessed directly, and the compare
+ * function should not be changed after filling the heap. Most of the functions
+ * assume that the heap does not violate certain properties; modifying the
+ * vector or the compare function will cause these heap properties to be
+ * violated.
  *
- *              The vector of the heap should never be accessed directly, and
- *              the compare function should not be changed after filling the
- *              heap. Most of the functions assume that the heap does not
- *              violate certain properties; modifying the vector or the compare
- *              function will cause these heap properties to be violated.
- *
- *              When the binary heap is no longer needed, call the 'bheap_free'
- *              function to free the memory from the vector. If the elements of
- *              the heap are dymanically allocated, they should all be popped
- *              and freed before calling the 'bheap_free' function. Otherwise,
- *              the references inside the heap will be lost, and memory may be
- *              leaked. Once 'bheap_free' is called on the heap, it should no
- *              longer be used unless 'bheap_init' is called on it again.
+ * When the binary heap is no longer needed, call the #bheap_free() function to
+ * free the memory from the vector. If the elements of the heap are dymanically
+ * allocated, they should all be popped and freed before calling the
+ * #bheap_free() function. Otherwise, the references inside the heap will be
+ * lost, and memory may be leaked. Once #bheap_free() is called on the heap, it
+ * should no longer be used unless #bheap_init() is called on it again.
  */
-struct binheap {
-    HeapCompare cmp;
-    struct vector vec;
+struct binheap
+{
+    HeapCompare cmp;   /**< Comparison function used for sorting the elements on
+                            the heap. See the description of the HeapCompare
+                            typedef for more information. */
+    struct vector vec; /**< Vector holding all the elements in the heap. */
 };
 
 
-/*
- * bheap_init
+/**
+ * \brief Initialize the given binary heap so that it is ready to be used.
  *
- * Description: Initialize the given binary heap so that it is ready to be used.
- *              This includes initializing the vector, as well as storing the
- *              comparison function for sorting the heap. The argument 'size' is
- *              the initial value for the number of bytes for the initial size
- *              of the vector, or 0 if the default size is desired. Returns a
- *              flag indicating whether or not the operation succeeded (0 for
- *              success, -1 for failure).
+ * This includes initializing the vector, as well as storing the comparison
+ * function for sorting the heap. The argument \p size is the initial value for
+ * the number of bytes for the initial size of the vector, or \c 0 if the
+ * default size is desired. Returns a flag indicating whether or not the
+ * operation succeeded (\c 0 for success, \c -1 for failure).
  *
- * Arguments:   bh      Pointer to the binary heap to initialize.
- *              cmp     Function for comparing two elements of the heap to
- *                      determine which is smaller.
- *              size    Initial value for the number of bytes in the vector. If
- *                      this argument is 0, then the default size is used.
+ * \param bh Pointer to the binary heap to initialize.
+ * \param cmp Function for comparing two elements of the heap to determine which
+ *        is smaller.
+ * \param size Initial value for the number of bytes in the vector. If this
+ *             argument is \c 0, then the default size is used.
  *
- * Returns:     If memory is successfully allocated for the vector, returns 0.
- *              If the memory allocation fails, returns -1.
+ * \return If memory is successfully allocated for the vector, returns \c 0. If
+ * the memory allocation fails, returns \c -1.
  *
- * Pre:         bh != NULL
- *              cmp != NULL
+ * \pre <tt>bh != NULL</tt>
+ * \pre <tt>cmp != NULL</tt>
  *
- * Notes:       The 'size' argument should generally be 0, unless there is a
- *              specific reason to limit the size of the vector. Note that this
- *              argument is given in bytes, not number of elements. To get the
- *              size for a vector with 'n' elements, pass 'n * BHEAP_ELEMSIZE'.
+ * \note The \p size argument should generally be \c 0, unless there is a
+ * specific reason to limit the size of the vector. Note that this argument is
+ * given in bytes, not number of elements. To get the size for a vector with \c
+ * n elements, pass <tt>n * BHEAP_ELEMSIZE</tt>.
  */
 int bheap_init(struct binheap *bh, HeapCompare cmp, size_t size);
 
-/*
- * bheap_free
+/**
+ * \brief Free all the dynamically-allocated memory associated with the given
+ * binary heap.
  *
- * Description: Free all the dynamically-allocated memory associated with the
- *              given binary heap. Does not actually change any of the members
- *              of the heap, just frees the vector used for storing data.
+ * Does not actually change any of the members of the heap, just frees the
+ * vector used for storing data.
  *
- * Arguments:   bh  Pointer to the binary heap to free.
+ * \param bh Pointer to the binary heap to free.
  *
- * Pre:         bh != NULL
+ * \pre <tt>bh != NULL</tt>
  *
- * Notes:       If any of the elements of the heap need to be freed, they should
- *              be freed before calling this function. The best way to do this
- *              is to pop them all until the heap is empty, freeing them
- *              individually.
- *
- *              This function is extremely simple; it can easily be inlined.
+ * \note If any of the elements of the heap need to be freed, they should be
+ * freed before calling this function. The best way to do this is to pop them
+ * all until the heap is empty, freeing them individually.
  */
 void bheap_free(struct binheap *bh);
 
-/*
- * bheap_size
+/**
+ * \brief Get the total number of elements currently stored on the binary heap.
  *
- * Description: Get the total number of elements currently stored on the binary
- *              heap.
+ * \param bh Pointer to the binary heap to count the elements of.
  *
- * Arguments:   bh  Pointer to the binary heap to count the elements of.
+ * \return Returns the number of elements currently stored on the binary heap.
  *
- * Returns:     Returns the number of elements currently stored on the binary
- *              heap.
+ * \pre <tt>bh != NULL</tt>
  *
- * Pre:         bh != NULL
- *
- * Notes:       Note this returns the number of elements on the heap, not the
- *              amount of space held by the heap.
- *
- *              This function is just a wrapper around getting the size of the
- *              vector. It can easily be inlined.
+ * \note Note this returns the number of elements on the heap, not the amount of
+ * space held by the heap.
  */
 unsigned int bheap_size(const struct binheap *bh);
 
-/*
- * bheap_space
+/**
+ * \brief Get the total number of elements that can currently be stored in the
+ * heap.
  *
- * Description: Get the total number of elements that can currently be stored in
- *              the heap. This is the number of elements that the heap's vector
- *              can contain before it must be expanded.
+ * This is the number of elements that the heap's vector can contain before it
+ * must be expanded.
  *
- * Arguments:   bh  Pointer to the binary heap to count the total spaces of.
+ * \param bh Pointer to the binary heap to count the total spaces of.
  *
- * Returns:     Returns the total number of elements that can be stored in the
- *              binary heap before it must be expanded.
+ * \return Returns the total number of elements that can be stored in the binary
+ * heap before it must be expanded.
  *
- * Pre:         bh != NULL
+ * \pre <tt>bh != NULL</tt>
  *
- * Notes:       This gives the number of elements that can fit, not the number
- *              of bytes. It generally does not need to be called, because the
- *              binary heap will automatically expand when needed.
- *
- *              This is a very simple function, so it can probably be inlined.
+ * \note This gives the number of elements that can fit, not the number of
+ * bytes. It generally does not need to be called, because the binary heap will
+ * automatically expand when needed.
  */
 unsigned int bheap_space(const struct binheap *bh);
 
-/*
- * bheap_isempty
+/**
+ * \brief Determines if the binary heap is empty.
  *
- * Description: Determines if the binary heap is empty. Returns true if the heap
- *              is empty; returns false if the heap is not empty.
+ * Returns true if the heap is empty; returns false if the heap is not empty.
  *
- * Arguments:   bh  Pointer to the binary heap to check for emptiness.
+ * \param bh Pointer to the binary heap to check for emptiness.
  *
- * Returns:     If the number of elements in the vector is 0, returns true.
- *              Else, returns false.
+ * \return If the number of elements in the vector is \c 0, returns true. Else,
+ * returns false.
  *
- * Pre:         bh != NULL
- *
- * Notes:       Uses the traditional 'int' for the boolean, instead defining a
- *              new typedef or using the C99 'stdbool'. Does this for
- *              portability reasons mostly.
- *
- *              This function is very simple; it can easily be inlined.
+ * \pre <tt>bh != NULL</tt>
  */
 int bheap_isempty(const struct binheap *bh);
 
-/*
- * bheap_push
+/**
+ * \brief Push a new element onto the heap.
  *
- * Description: Push a new element onto the heap. The new element will be added
- *              to the bottom, then sifted upwards until the heap property is
- *              restored. Since this is a minheap, the new element will be
- *              sifted into a place where both children are greater than it. If
- *              there is not enough memory for the element to fit on the heap,
- *              more memory will automatically be allocated. Returns a code
- *              indicating whether or not the element was successfully added to
- *              the heap: 0 if successful, -1 if the heap was not big enough and
- *              the memory allocation failed.
+ * The new element will be added to the bottom, then sifted upwards until the
+ * heap property is restored. Since this is a minheap, the new element will be
+ * sifted into a place where both children are greater than it. If there is not
+ * enough memory for the element to fit on the heap, more memory will
+ * automatically be allocated. Returns a code indicating whether or not the
+ * element was successfully added to the heap: \c 0 if successful, \c -1 if the
+ * heap was not big enough and the memory allocation failed.
  *
- * Arguments:   bh  Pointer to the heap to add an element to.
- *              e   Element to add to the heap.
+ * \param bh Pointer to the heap to add an element to.
+ * \param e Element to add to the heap.
  *
- * Returns:     If the element is successfully added to the binary heap, returns
- *              0. If there is not enough space on the heap, and the memory
- *              allocation fails, returns -1.
+ * \return If the element is successfully added to the binary heap, returns \c
+ * 0. If there is not enough space on the heap, and the memory allocation fails,
+ * returns \c -1.
  *
- * Pre:         bh != NULL
+ * \pre <tt>bh != NULL</tt>
  *
- * Post:        Heap property holds.
+ * \post Heap property holds.
  *
- * Notes:       This operation has a worst-case time complexity of 'O(log n)'
- *              where 'n' is the size of the heap.
+ * \note This operation has a worst-case time complexity of O(log n) with
+ * respect to the size of the heap.
  */
 int bheap_push(struct binheap *bh, void *e);
 
-/*
- * bheap_pop
+/**
+ * \brief Get the minimum element from the heap and remove that element from the
+ * heap.
  *
- * Description: Get the minimum element from the heap and remove that element
- *              from the heap. After the element is removed, the element at the
- *              tail of the heap is moved to the top, then sifted down in order
- *              to restore the heap property. Since this is a minheap, the
- *              element will be sifted into a place where both children are
- *              greater than it. If there are no elements on the heap, returns
- *              'NULL'. In order to get the minimum element without removing it,
- *              use the 'bheap_peek' function.
+ * After the element is removed, the element at the tail of the heap is moved to
+ * the top, then sifted down in order to restore the heap property. Since this
+ * is a minheap, the element will be sifted into a place where both children are
+ * greater than it. If there are no elements on the heap, returns \c NULL. In
+ * order to get the minimum element without removing it, use the #bheap_peek()
+ * function.
  *
- * Arguments:   bh  Pointer to the heap to pop an element off of.
+ * \param bh Pointer to the heap to pop an element off of.
  *
- * Returns:     Returns the minimum element from the heap, or 'NULL' if the heap
- *              is empty.
+ * \return Returns the minimum element from the heap, or \c NULL if the heap is
+ * empty.
  *
- * Pre:         bh != NULL
+ * \pre <tt>bh != NULL</tt>
  *
- * Post:        Heap property holds.
+ * \post Heap property holds.
  *
- * Notes:       This operation has a worst-case time complexity of 'O(log n)'
- *              where 'n' is the size of the heap.
+ * \note This operation has a worst-case time complexity of O(log n), with
+ * repect to the size of the heap.
  */
 void *bheap_pop(struct binheap *bh);
 
-/*
- * bheap_peek
+/**
+ * \brief Get the minimum element from the heap without removing it from the
+ * heap.
  *
- * Description: Get the minimum element from the heap without removing it from
- *              the heap. If there are no elements on the heap, returns 'NULL'.
+ * If there are no elements on the heap, returns \c NULL.
  *
- * Arguments:   bh  Pointer to the binary heap to find the minimum from.
+ * \param bh Pointer to the binary heap to find the minimum from.
  *
- * Returns:     Returns the minimum element from the heap, or 'NULL' if the heap
- *              is empty.
+ * \return Returns the minimum element from the heap, or \c NULL if the heap is
+ * empty.
  *
- * Pre:         bh != NULL
+ * \pre <tt>bh != NULL</tt>
  *
- * Notes:       This operation has a worst-case time complexity of 'O(1)', where
- *              'n' is the size of the heap. This function is very simple and
- *              can easily be inlined.
+ * \note This operation has a worst-case time complexity of O(1), with respect
+ * to the size of the heap.
  */
 void *bheap_peek(const struct binheap *bh);
 
