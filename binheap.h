@@ -258,6 +258,7 @@ int bheap_isempty(const struct binheap *bh);
  * returns \c -1.
  *
  * \pre <tt>bh != NULL</tt>
+ * \pre Heap property holds.
  *
  * \post Heap property holds.
  *
@@ -283,6 +284,7 @@ int bheap_push(struct binheap *bh, void *e);
  * empty.
  *
  * \pre <tt>bh != NULL</tt>
+ * \pre Heap property holds.
  *
  * \post Heap property holds.
  *
@@ -303,6 +305,7 @@ void *bheap_pop(struct binheap *bh);
  * empty.
  *
  * \pre <tt>bh != NULL</tt>
+ * \pre Heap property holds.
  *
  * \note This operation has a worst-case time complexity of O(1), with respect
  * to the size of the heap.

@@ -389,6 +389,7 @@ int bheap_push(struct binheap *bh, void *e)
                    onto the vector. */
 
     assert(bh != NULL);
+    assert(_checkheap(bh));
 
     /* Add the new element to the end of the vector. This is the location of the
      * first unfilled node in the lowest level of the tree. */
@@ -424,6 +425,7 @@ void *bheap_pop(struct binheap *bh)
     void *tail;
 
     assert(bh != NULL);
+    assert(_checkheap(bh));
 
     v = &(bh->vec);
     min = vec_head(v);
@@ -461,6 +463,7 @@ void *bheap_pop(struct binheap *bh)
 void *bheap_peek(const struct binheap *bh)
 {
     assert(bh != NULL);
+    assert(_checkheap(bh));
 
     return vec_head(&(bh->vec));
 }

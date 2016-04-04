@@ -31,8 +31,9 @@
  * \brief Doubly-linked list.
  *
  * Implementation for a doubly-linked list with no internal memory allocation.
- * All memory allocation is performed by adding list_elem structures to existing
- * datatypes; this allows all memory allocation to be completely external.
+ * All memory allocation is performed by adding #list_elem structures to
+ * existing datatypes; this allows all memory allocation to be completely
+ * external.
  */
 
 #ifndef _LIST_H_
