@@ -11,6 +11,7 @@ The following data structures have been written:
  - `vector` : Dynamically-resizable arrays.
  - `binheap` : Binary min-heap, implemented using a vector.
  - `list` : Doubly-linked list without any dynamic memory allocation.
+ - `htable` : Hash table using linked lists for collisions.
 
 # Copyright
 
