@@ -45,6 +45,8 @@
 #define _VECTOR_H_
 
 
+#include <stddef.h>
+
 /**
  * Used as the default size for a new vector if a size is not specified in the
  * init function.

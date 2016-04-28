@@ -1,16 +1,23 @@
 CC	?=	gcc
-CFLAGS	+=	-c -O2 -DNDEBUG -march=native -fomit-frame-pointer -pedantic \
-		-ansi
-OBJ	= 	binheap.o list.o htable.o vector.o
-SRC	=	binheap.c binheap.h htable.c htable.h list.c list.h \
-		vector.c vector.h
+MAKE	?=	make
+CFLAGS	+=	-c -O2 -DNDEBUG -march=native -pedantic -ansi
+MOD	=	binheap list htable vector
+OBJ	= 	$(addsuffix .o,$(MOD))
+SRC	=	$(addsuffix .c,$(MOD)) $(addsuffix .h,$(MOD))
+TESTDIR	=	tests
+
+.PHONY: debug all mostlyclean distclean clean test
 
 debug: CFLAGS = -c -Og -g -Wall -Wstrict-prototypes -pedantic -ansi
 
 
 all: $(OBJ)
 
-debug: $(OBJ)
+test: mostlyclean debug
+	$(MAKE) -C $(TESTDIR)
+	scripts/testbench.pl $(TESTDIR)/*/*.test
+
+debug: mostlyclean $(OBJ)
 
 docs: $(SRC) Doxyfile
 	doxygen Doxyfile
@@ -27,6 +34,11 @@ list.o: list.c list.h
 htable.o: htable.c htable.h list.h
 	$(CC) $(CFLAGS) $<
 
-clean:
-	rm -rf *.o *.s docs
+mostlyclean:
+	rm -rf *.o
 
+clean: mostlyclean distclean
+	$(MAKE) -k clean -C $(TESTDIR)
+
+distclean: mostlyclean
+	rm -rf docs
