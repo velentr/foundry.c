@@ -71,15 +71,6 @@
  * stored in the vector will not change based on any of the operators in this
  * file, but the indices may change.
  *
- * size    Stores a count of the total number of elements in the
- *                      vector.
- *              space   Stores the current number of elements that can fit in
- *                      the allocated array. Used for determining when the
- *                      vector must grow.
- *              data    Dynamically allocated array of void pointers for holding
- *                      any data type. Size may change as more elements are
- *                      added.
- *
  * When using a vector, first call the #vec_init() function to initialize the
  * size and space, and to allocate a new buffer for the data. Then, any of the
  * \c vec_* functions may be called to operate on the vector.

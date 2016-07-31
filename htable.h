@@ -183,8 +183,10 @@ void ht_insert(struct hash_table *ht, struct hash_elem *he);
  * \param he Pointer to the hash element to remove.
  *
  * \pre <tt>he != NULL</tt>
+ *
+ * \return Returns \p he, as a convenience.
  */
-void ht_remove(struct hash_elem *he);
+struct hash_elem *ht_remove(struct hash_elem *he);
 
 /**
  * \brief Finds the hash element matching \p key from the given hash table.
@@ -198,6 +200,9 @@ void ht_remove(struct hash_elem *he);
  *
  * \pre <tt>ht != NULL</tt>
  * \pre <tt>key != NULL</tt>
+ *
+ * \return Returns a pointer to an element in the table with a matching key. If
+ * no such element is found, returns \c NULL.
  */
 struct hash_elem *ht_get(struct hash_table *ht, struct hash_elem *key);
 
