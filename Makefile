@@ -1,6 +1,6 @@
 CC	?=	gcc
 MAKE	?=	make
-CFLAGS	+=	-c -O3 -DNDEBUG -march=native -pedantic -std=c99
+CFLAGS	+=	-c -O3 -DNDEBUG -march=native -pedantic -std=c99 -pipe
 MOD	=	binheap list htable vector
 OBJ	= 	$(addsuffix .o,$(MOD))
 SRC	=	$(addsuffix .c,$(MOD)) $(addsuffix .h,$(MOD))
