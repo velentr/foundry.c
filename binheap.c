@@ -26,9 +26,9 @@
 /**
  * \file binheap.c
  *
- * \brief Arbitrarily large binary heaps, public interface.
+ * \brief Arbitrarily large binary heaps.
  *
- * This file contains the public interface for a binary heap. The interface is
+ * This file contains the implementation for a binary heap. The interface is
  * sufficient for creating a priority queue with the heap. In many cases, this
  * implementation optimizes for speed rather than checking input; garbage in,
  * garbage out.
