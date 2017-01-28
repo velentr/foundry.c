@@ -1,6 +1,6 @@
 CC	?=	gcc
 MAKE	?=	make
-CFLAGS	+=	-c -O2 -DNDEBUG -march=native -pedantic -ansi
+CFLAGS	+=	-c -O3 -DNDEBUG -march=native -pedantic -std=c99
 MOD	=	binheap list htable vector
 OBJ	= 	$(addsuffix .o,$(MOD))
 SRC	=	$(addsuffix .c,$(MOD)) $(addsuffix .h,$(MOD))
@@ -8,7 +8,7 @@ TESTDIR	=	tests
 
 .PHONY: debug all mostlyclean distclean clean test
 
-debug: CFLAGS = -c -Og -g -Wall -Wstrict-prototypes -pedantic -ansi
+debug: CFLAGS = -c -Og -g -Wall -Wstrict-prototypes -pedantic -std=c99
 
 
 all: $(OBJ)
