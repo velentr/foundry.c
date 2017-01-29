@@ -46,7 +46,7 @@
  * \brief Node in a doubly-linked list structure.
  *
  * The list element can be embedded into another structure in order to create a
- * linked list of said structure. Use #list_entry() to get a pointer to the
+ * linked list of said structure. Use #containerof() to get a pointer to the
  * containing structure.
  */
 struct list_elem
