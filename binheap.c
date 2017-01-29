@@ -330,92 +330,6 @@ int bheap_init(struct binheap *bh, HeapCompare cmp, size_t elemsize,
 }
 
 /**
- * \brief Free all the dynamically-allocated memory associated with the given
- * binary heap.
- *
- * Does not actually change any of the members of the heap, just frees the
- * vector used for storing data.
- *
- * \param bh Pointer to the binary heap to free.
- *
- * \pre <tt>bh != NULL</tt>
- *
- * \note If any of the elements of the heap need to be freed, they should be
- * freed before calling this function. The best way to do this is to pop them
- * all until the heap is empty, freeing them individually.
- */
-void bheap_free(struct binheap *bh)
-{
-    assert(bh != NULL);
-
-    /* Deinitialize the vector holding the heap data. */
-    vec_free(&(bh->vec));
-}
-
-/**
- * \brief Get the total number of elements currently stored on the binary heap.
- *
- * \param bh Pointer to the binary heap to count the elements of.
- *
- * \return Returns the number of elements currently stored on the binary heap.
- *
- * \pre <tt>bh != NULL</tt>
- *
- * \note Note this returns the number of elements on the heap, not the amount of
- * space held by the heap.
- */
-unsigned int bheap_len(const struct binheap *bh)
-{
-    assert(bh != NULL);
-
-    return vec_len(&(bh->vec));
-}
-
-/**
- * \brief Get the total number of elements that can currently be stored in the
- * heap.
- *
- * This is the number of elements that the heap's vector can contain before it
- * must be expanded.
- *
- * \param bh Pointer to the binary heap to count the total spaces of.
- *
- * \return Returns the total number of elements that can be stored in the binary
- * heap before it must be expanded.
- *
- * \pre <tt>bh != NULL</tt>
- *
- * \note This gives the number of elements that can fit, not the number of
- * bytes. It generally does not need to be called, because the binary heap will
- * automatically expand when needed.
- */
-unsigned int bheap_space(const struct binheap *bh)
-{
-    assert(bh != NULL);
-
-    return vec_space(&(bh->vec));
-}
-
-/**
- * \brief Determines if the binary heap is empty.
- *
- * Returns true if the heap is empty; returns false if the heap is not empty.
- *
- * \param bh Pointer to the binary heap to check for emptiness.
- *
- * \return If the number of elements in the vector is \c 0, returns true. Else,
- * returns false.
- *
- * \pre <tt>bh != NULL</tt>
- */
-int bheap_isempty(const struct binheap *bh)
-{
-    assert(bh != NULL);
-
-    return vec_isempty(&(bh->vec));
-}
-
-/**
  * \brief Push a new element onto the heap.
  *
  * The new element will be added to the bottom, then sifted upwards until the
@@ -519,30 +433,5 @@ int bheap_pop(struct binheap *bh)
     assert(_checkheap(bh));
 
     return rc;
-}
-
-/**
- * \brief Get the minimum element from the heap without removing it from the
- * heap.
- *
- * If there are no elements on the heap, returns \c NULL.
- *
- * \param bh Pointer to the binary heap to find the minimum from.
- *
- * \return Returns the minimum element from the heap, or \c NULL if the heap is
- * empty.
- *
- * \pre <tt>bh != NULL</tt>
- * \pre Heap property holds.
- *
- * \note This operation has a worst-case time complexity of O(1), with respect
- * to the size of the heap.
- */
-void *bheap_peek(const struct binheap *bh)
-{
-    assert(bh != NULL);
-    assert(_checkheap(bh));
-
-    return vec_head(&(bh->vec));
 }
 
