@@ -106,8 +106,10 @@ int vec_init(struct vector *v, size_t elemsize, size_t len,
     size_t size;
 
     assert(v != NULL);
+    assert(elemsize != 0);
 
     v->len = 0;         /* We always start off storing 0 elements. */
+    v->elemsize = elemsize;
 
     /* The amount of space defaults to 'DEF_VEC_SIZE' elements if the size is
      * unspecified. Store this in the vector.
@@ -443,6 +445,10 @@ void vec_swap(struct vector *v, size_t i, size_t j)
     assert(v != NULL);
     assert(i < vec_len(v));
     assert(j < vec_len(v));
+
+    /* memcpy can't handle overlapping regions, so need to check this here. */
+    if (i == j)
+        return;
 
     /* Get element i, and store it in a temporary variable. */
     _tmp = vec_get(v, i);

@@ -9,28 +9,41 @@
 
 int cmp(const void *a, const void *b)
 {
-    return a - b;
+    const int *_a, *_b;
+
+    _a = a;
+    _b = b;
+
+    return *_a - *_b;
 }
 
 int main(int argc, char *argv[])
 {
     struct binheap uut;
-    unsigned i;
+    int i;
     long prev;
 
-    bheap_init(&uut, cmp, 0, realloc);
+    bheap_init(&uut, cmp, sizeof(int), 0, realloc);
 
-    bheap_push(&uut, (void *)3);
-    bheap_push(&uut, (void *)2);
-    bheap_push(&uut, (void *)1);
+    i = 3;
+    bheap_push(&uut, &i);
+    i = 2;
+    bheap_push(&uut, &i);
+    i = 1;
+    bheap_push(&uut, &i);
 
-    assert(bheap_pop(&uut) == (void *)1);
+    assert(*(int*)bheap_peek(&uut) == 1);
+    bheap_pop(&uut);
 
-    bheap_push(&uut, (void *)4);
+    i = 4;
+    bheap_push(&uut, &i);
 
-    assert(bheap_pop(&uut) == (void *)2);
-    assert(bheap_pop(&uut) == (void *)3);
-    assert(bheap_pop(&uut) == (void *)4);
+    assert(*(int*)bheap_peek(&uut) == 2);
+    bheap_pop(&uut);
+    assert(*(int*)bheap_peek(&uut) == 3);
+    bheap_pop(&uut);
+    assert(*(int*)bheap_peek(&uut) == 4);
+    bheap_pop(&uut);
 
     bheap_free(&uut);
 

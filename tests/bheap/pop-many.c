@@ -17,35 +17,41 @@
 
 int cmp(const void *a, const void *b)
 {
-    return a - b;
+    const int *_a, *_b;
+
+    _a = a;
+    _b = b;
+
+    return *_a - *_b;
 }
 
 int main(int argc, char *argv[])
 {
     struct binheap uut;
     unsigned i;
-    long prev;
+    int j;
+    int prev, cur;
 
-    bheap_init(&uut, cmp, 0, realloc);
+    bheap_init(&uut, cmp, sizeof(int), 0, realloc);
     srand(TEST_SEED);
 
     for (i = 0; i < TEST_SIZE; i++)
     {
-        bheap_push(&uut, (void *)(long)(rand() % TEST_VALUE));
+        j = rand() % TEST_VALUE;
+        bheap_push(&uut, &j);
     }
 
-    prev = (long)bheap_peek(&uut);
+    prev = *(int *)bheap_peek(&uut);
     for (i = 0; i < TEST_SIZE; i++)
     {
-        assert(bheap_size(&uut) == TEST_SIZE - i);
+        assert(bheap_len(&uut) == TEST_SIZE - i);
 
-        long peek = (long)bheap_peek(&uut);
-        long pop  = (long)bheap_pop(&uut);
+        cur = *(int *)bheap_peek(&uut);
+        bheap_pop(&uut);
 
-        assert(pop == peek);
-        assert(peek >= prev);
+        assert(cur >= prev);
 
-        prev = peek;
+        prev = cur;
     }
 
     assert(bheap_isempty(&uut));

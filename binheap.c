@@ -195,11 +195,15 @@ static void _siftdown(struct binheap *bh, unsigned int i)
     unsigned int smallest = i;
 
     assert(bh != NULL);
-    assert(i < vec_len(&(bh->vec)));
+    assert(vec_isempty(&bh->vec) || i < vec_len(&(bh->vec)));
 
     v = &(bh->vec);
     l = _lchild(i);
     r = _rchild(i);
+
+    /* Nothing to do if the vector is empty. */
+    if (vec_isempty(v))
+        return;
 
     /* Check if the left child exists and the root node is greater than its
      * left child. */

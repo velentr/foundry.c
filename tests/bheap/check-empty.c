@@ -5,14 +5,19 @@
 
 int cmp(const void *a, const void *b)
 {
-    return a - b;
+    const int *_a, *_b;
+
+    _a = a;
+    _b = b;
+
+    return *_a - *_b;
 }
 
 int main(int argc, char *argv[])
 {
     struct binheap uut;
 
-    bheap_init(&uut, cmp, 0, realloc);
+    bheap_init(&uut, cmp, sizeof(int), 0, realloc);
 
     assert(bheap_isempty(&uut));
 
@@ -20,3 +25,4 @@ int main(int argc, char *argv[])
 
     return 0;
 }
+

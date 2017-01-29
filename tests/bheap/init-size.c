@@ -9,14 +9,19 @@
 
 int cmp(const void *a, const void *b)
 {
-    return a - b;
+    const int *_a, *_b;
+
+    _a = a;
+    _b = b;
+
+    return *_a - *_b;
 }
 
 int main(int argc, char *argv[])
 {
     struct binheap uut;
 
-    bheap_init(&uut, cmp, TEST_SIZE * BHEAP_ELEMSIZE, realloc);
+    bheap_init(&uut, cmp, sizeof(int), TEST_SIZE, realloc);
 
     assert(bheap_space(&uut) == TEST_SIZE);
     assert(bheap_isempty(&uut));
