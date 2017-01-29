@@ -14,7 +14,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
  * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -22,10 +22,10 @@
  * For more information, please refer to <http://unlicense.org>
  */
 
-/*
- * htable.c
+/**
+ * \file htable.c
  *
- * Hash table using linked lists for hash collisions.
+ * \brief Hash table using linked lists for hash collisions.
  */
 
 #include <assert.h>
@@ -33,6 +33,7 @@
 
 #include "htable.h"
 #include "list.h"
+#include "utils.h"
 
 /* Initialize all the members in the hash table. */
 void ht_init(struct hash_table *ht, struct list *buckets, size_t num,
@@ -113,7 +114,7 @@ struct hash_elem *ht_get(struct hash_table *ht, struct hash_elem *key)
     for (le = list_begin(bucket); le != list_end(bucket); le = list_next(le))
     {
         /* Get the hash entry corresponding to the current list iterator. */
-        struct hash_elem *val = list_entry(le, struct hash_elem, le);
+        struct hash_elem *val = containerof(le, struct hash_elem, le);
 
         /* If the value matches the key, then return it. */
         if (cmp(val, key) == 0)
@@ -153,7 +154,7 @@ struct list *ht_rehash(struct hash_table *ht, struct list *buckets, size_t num)
         {
             /* For each hash element, remove it from the old bucket and add it
              * to a new bucket. */
-            struct hash_elem *val = list_entry(le, struct hash_elem, le);
+            struct hash_elem *val = containerof(le, struct hash_elem, le);
             (void)ht_remove(val);
             ht_insert(ht, val);
         }

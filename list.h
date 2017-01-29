@@ -14,7 +14,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
  * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -39,27 +39,8 @@
 #ifndef _LIST_H_
 #define _LIST_H_
 
+
 #include <stddef.h>
-
-/**
- * \brief Get a pointer to the structure containing the given list element.
- *
- * If you have a structure \c str that contains a list element in member \c e,
- * and you have a pointer to an element \c elem, you can get a pointer to the
- * containing structure \c str with the code
- * \code
- * list_entry(elem, str, e);
- * \endcode
- *
- * \param LIST_ELEM Pointer to the list element of interest.
- * \param STRUCT Name of the structure containing a \c list_elem.
- * \param MEMBER Member of \p STRUCT that holds the \c list_elem.
- *
- * \return Returns a pointer to the structure containing \p LIST_ELEM.
- */
-#define list_entry(LIST_ELEM, STRUCT, MEMBER) ((STRUCT *)((size_t) (LIST_ELEM) \
-            - offsetof(STRUCT, MEMBER)))
-
 
 /**
  * \brief Node in a doubly-linked list structure.

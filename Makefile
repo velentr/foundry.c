@@ -34,7 +34,7 @@ vector.o: vector.c vector.h
 list.o: list.c list.h
 	$(CC) $(CFLAGS) $<
 
-htable.o: htable.c htable.h list.h
+htable.o: htable.c htable.h list.h utils.h
 	$(CC) $(CFLAGS) $<
 
 mostlyclean:

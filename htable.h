@@ -14,7 +14,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
  * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -44,25 +44,6 @@
 
 
 #include "list.h"
-
-/**
- * \brief Get a pointer to the structure containing the given hash element.
- *
- * If you have a structure \c str that contains a hash element in member \c he,
- * and you have a pointer to an element \c elem, you can get a pointer to the
- * containing structure \c str with the code
- * \code
- * hash_entry(elem, str, he);
- * \endcode
- *
- * \param HASH_ELEM Pointer to the hash element of interest.
- * \param STRUCT Name of the structure containing a \c hash_elem.
- * \param MEMBER Member of \p STRUCT that holds the \c hash_elem.
- *
- * \return Returns a pointer to the structure containing \p HASH_ELEM.
- */
-#define hash_entry(HASH_ELEM, STRUCT, MEMBER) ((STRUCT *)((size_t) (HASH_ELEM) \
-            - offsetof(STRUCT, MEMBER)))
 
 /**
  * \brief Element stored in a hash table.
