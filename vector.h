@@ -48,7 +48,9 @@
 #define _VECTOR_H_
 
 
+#include <assert.h>
 #include <stddef.h>
+#include <string.h>
 
 /**
  * Used as the default length for a new vector if a size is not specified in the
