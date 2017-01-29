@@ -13,6 +13,12 @@ The following data structures have been written:
  - `list` : Doubly-linked list without any dynamic memory allocation.
  - `htable` : Hash table using linked lists for collisions.
 
+## Algorithms
+
+The following algorithms are implemented:
+
+ - `bresenham` : Bresenham's line drawing algorithm.
+
 # Unlicense
 
 This is free and unencumbered software released into the public domain.
