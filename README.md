@@ -12,6 +12,7 @@ The following data structures have been written:
  - `htable` : Hash table using linked lists for collisions.
  - `list` : Doubly-linked list without any dynamic memory allocation.
  - `pheap` : Pairing heap, using doubly-linked lists.
+ - `rbtree` : Red-black self-balancing binary search tree.
  - `vector` : Dynamically-resizable arrays.
 
 ## Algorithms

@@ -2,7 +2,8 @@ CC	?=	gcc
 MAKE	?=	make
 CFLAGS	+=	-c -O3 -DNDEBUG -march=native -pedantic -std=c99 -pipe -flto
 CFLAGS	+=	-Wall -Wextra -Werror -Wno-unused-function
-MOD	=	binheap bresenham htable kmp list pheap vector
+MOD	=	binheap bresenham htable kmp list pheap rbtree vector
+>>>>>>> Update Makefile and documentation for rbtree.
 OBJ	= 	$(addsuffix .o,$(MOD))
 SRC	=	$(addsuffix .c,$(MOD)) $(addsuffix .h,$(MOD)) utils.h
 TESTDIR	=	tests
@@ -40,6 +41,9 @@ list.o: list.c list.h
 	$(CC) $(CFLAGS) $<
 
 pheap.o: pheap.c list.h pheap.h utils.h
+	$(CC) $(CFLAGS) $<
+
+rbtree.o: rbtree.c rbtree.h
 	$(CC) $(CFLAGS) $<
 
 vector.o: vector.c vector.h
