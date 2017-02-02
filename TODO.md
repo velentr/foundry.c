@@ -2,6 +2,7 @@
 
 - `rbtree` : Balanced red-black tree.
 - `fibheap` : Fibonacci heap.
+- `pheap` : Pairing heap.
 - `graph` : Graph and associated algorithms.
 - `btree` : B-tree using given order.
 
