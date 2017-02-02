@@ -197,7 +197,7 @@ size_t ht_space(struct hash_table *ht)
 }
 
 /* See if the given hash table is empty. */
-int ht_empty(struct hash_table *ht)
+int ht_isempty(struct hash_table *ht)
 {
     size_t i;
     size_t len;
@@ -211,7 +211,7 @@ int ht_empty(struct hash_table *ht)
     /* Loop through each buckets, checking whether or not it is empty. */
     for (i = 0; i < len; i++)
     {
-        if (!list_empty(buckets + i))
+        if (!list_isempty(buckets + i))
         {
             return 0;
         }

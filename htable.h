@@ -247,7 +247,7 @@ size_t ht_space(struct hash_table *ht);
  * \return Returns zero if the hash table contains any elements. Returns nonzero
  * if the hash table is empty.
  */
-int ht_empty(struct hash_table *ht);
+int ht_isempty(struct hash_table *ht);
 
 
 #endif /* end of include guard: _HTABLE_H_ */
