@@ -32,31 +32,31 @@ int main(int argc, char *argv[])
     int j;
     int prev, cur;
 
-    bheap_init(&uut, cmp, sizeof(int), 0, realloc);
+    binheap_init(&uut, cmp, sizeof(int), 0, realloc);
     srand(TEST_SEED);
 
     for (i = 0; i < TEST_SIZE; i++)
     {
         j = rand() % TEST_VALUE;
-        bheap_push(&uut, &j);
+        binheap_push(&uut, &j);
     }
 
-    prev = *(int *)bheap_peek(&uut);
+    prev = *(int *)binheap_peek(&uut);
     for (i = 0; i < TEST_SIZE; i++)
     {
-        assert(bheap_len(&uut) == TEST_SIZE - i);
+        assert(binheap_len(&uut) == TEST_SIZE - i);
 
-        cur = *(int *)bheap_peek(&uut);
-        bheap_pop(&uut);
+        cur = *(int *)binheap_peek(&uut);
+        binheap_pop(&uut);
 
         assert(cur >= prev);
 
         prev = cur;
     }
 
-    assert(bheap_isempty(&uut));
+    assert(binheap_isempty(&uut));
 
-    bheap_free(&uut);
+    binheap_free(&uut);
 
     return 0;
 }

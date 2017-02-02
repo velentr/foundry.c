@@ -316,10 +316,9 @@ static int _checkheap(const struct binheap *bh)
  *
  * \note The \p size argument should generally be \c 0, unless there is a
  * specific reason to limit the size of the vector. Note that this argument is
- * given in bytes, not number of elements. To get the size for a vector with \c
- * n elements, pass <tt>n * BHEAP_ELEMSIZE</tt>.
+ * given in bytes, not number of elements.
  */
-int bheap_init(struct binheap *bh, HeapCompare cmp, size_t elemsize,
+int binheap_init(struct binheap *bh, HeapCompare cmp, size_t elemsize,
         size_t size, void *(*alloc)(void *, size_t))
 {
     assert(bh != NULL);
@@ -359,7 +358,7 @@ int bheap_init(struct binheap *bh, HeapCompare cmp, size_t elemsize,
  * \note This operation has a worst-case time complexity of O(log n) with
  * respect to the size of the heap.
  */
-int bheap_push(struct binheap *bh, void *e)
+int binheap_push(struct binheap *bh, void *e)
 {
     int rc;     /* Variable for holding the return code from pushing the element
                    onto the vector. */
@@ -390,7 +389,7 @@ int bheap_push(struct binheap *bh, void *e)
  * the top, then sifted down in order to restore the heap property. Since this
  * is a minheap, the element will be sifted into a place where both children are
  * greater than it. If there are no elements on the heap, returns -1. In order
- * to get the minimum element without removing it, use the #bheap_peek()
+ * to get the minimum element without removing it, use the #binheap_peek()
  * function.
  *
  * \param bh Pointer to the heap to pop an element off of.
@@ -406,7 +405,7 @@ int bheap_push(struct binheap *bh, void *e)
  * \note This operation has a worst-case time complexity of O(log n), with
  * respect to the size of the heap.
  */
-int bheap_pop(struct binheap *bh)
+int binheap_pop(struct binheap *bh)
 {
     /* Get a pointer to the vector to simplify the code. */
     struct vector *v;

@@ -17,11 +17,11 @@ int main(int argc, char *argv[])
 {
     struct binheap uut;
 
-    bheap_init(&uut, cmp, sizeof(int), 0, realloc);
+    binheap_init(&uut, cmp, sizeof(int), 0, realloc);
 
-    assert(bheap_isempty(&uut));
+    assert(binheap_isempty(&uut));
 
-    bheap_free(&uut);
+    binheap_free(&uut);
 
     return 0;
 }

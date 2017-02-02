@@ -51,7 +51,7 @@
  * Used as the default size for a new binary heap, if a size is not specified in
  * the init function. Right now, just uses the default vector size.
  */
-#define DEF_BHEAP_LEN  DEF_VEC_LEN
+#define DEF_BINHEAP_LEN  DEF_VEC_LEN
 
 
 /**
@@ -87,9 +87,9 @@ typedef int (*HeapCompare)(const void *a, const void *b);
  * function. Since a vector is used for storing the data, the binary heap will
  * grow arbitrarily large to fit all the elements.
  *
- * When using a binary heap, first call the #bheap_init() function to initialize
- * the vector and set the comparison function. Then, any of the \c bheap_*
- * functions can be called to manipulate the binary heap.
+ * When using a binary heap, first call the #binheap_init() function to
+ * initialize the vector and set the comparison function. Then, any of the \c
+ * binheap_* functions can be called to manipulate the binary heap.
  *
  * The vector of the heap should never be accessed directly, and the compare
  * function should not be changed after filling the heap. Most of the functions
@@ -97,12 +97,12 @@ typedef int (*HeapCompare)(const void *a, const void *b);
  * vector or the compare function will cause these heap properties to be
  * violated.
  *
- * When the binary heap is no longer needed, call the #bheap_free() function to
- * free the memory from the vector. If the elements of the heap are dymanically
- * allocated, they should all be popped and freed before calling the
- * #bheap_free() function. Otherwise, the references inside the heap will be
- * lost, and memory may be leaked. Once #bheap_free() is called on the heap, it
- * should no longer be used unless #bheap_init() is called on it again.
+ * When the binary heap is no longer needed, call the #binheap_free() function
+ * to free the memory from the vector. If the elements of the heap are
+ * dymanically allocated, they should all be popped and freed before calling the
+ * #binheap_free() function. Otherwise, the references inside the heap will be
+ * lost, and memory may be leaked. Once #binheap_free() is called on the heap,
+ * it should no longer be used unless #binheap_init() is called on it again.
  */
 struct binheap
 {
@@ -113,10 +113,10 @@ struct binheap
 };
 
 
-int bheap_init(struct binheap *bh, HeapCompare cmp, size_t elemsize,
+int binheap_init(struct binheap *bh, HeapCompare cmp, size_t elemsize,
         size_t size, void *(*alloc)(void *, size_t));
-int bheap_push(struct binheap *bh, void *e);
-int bheap_pop(struct binheap *bh);
+int binheap_push(struct binheap *bh, void *e);
+int binheap_pop(struct binheap *bh);
 
 /**
  * \brief Free all the dynamically-allocated memory associated with the given
@@ -133,7 +133,7 @@ int bheap_pop(struct binheap *bh);
  * freed before calling this function. The best way to do this is to pop them
  * all until the heap is empty, freeing them individually.
  */
-static inline void bheap_free(struct binheap *bh)
+static inline void binheap_free(struct binheap *bh)
 {
     assert(bh != NULL);
 
@@ -153,7 +153,7 @@ static inline void bheap_free(struct binheap *bh)
  * \note Note this returns the number of elements on the heap, not the amount of
  * space held by the heap.
  */
-static inline size_t bheap_len(const struct binheap *bh)
+static inline size_t binheap_len(const struct binheap *bh)
 {
     assert(bh != NULL);
 
@@ -178,7 +178,7 @@ static inline size_t bheap_len(const struct binheap *bh)
  * bytes. It generally does not need to be called, because the binary heap will
  * automatically expand when needed.
  */
-static inline size_t bheap_space(const struct binheap *bh)
+static inline size_t binheap_space(const struct binheap *bh)
 {
     assert(bh != NULL);
 
@@ -197,7 +197,7 @@ static inline size_t bheap_space(const struct binheap *bh)
  *
  * \pre <tt>bh != NULL</tt>
  */
-static inline int bheap_isempty(const struct binheap *bh)
+static inline int binheap_isempty(const struct binheap *bh)
 {
     assert(bh != NULL);
 
@@ -221,7 +221,7 @@ static inline int bheap_isempty(const struct binheap *bh)
  * \note This operation has a worst-case time complexity of O(1), with respect
  * to the size of the heap.
  */
-static inline void *bheap_peek(const struct binheap *bh)
+static inline void *binheap_peek(const struct binheap *bh)
 {
     assert(bh != NULL);
 

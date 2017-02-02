@@ -4,7 +4,7 @@
 #include "binheap.h"
 
 #ifndef TEST_SIZE
-#define TEST_SIZE 1024
+#define TEST_SIZE 5
 #endif
 
 int cmp(const void *a, const void *b)
@@ -20,18 +20,13 @@ int cmp(const void *a, const void *b)
 int main(int argc, char *argv[])
 {
     struct binheap uut;
-    unsigned long i;
 
-    bheap_init(&uut, cmp, sizeof(int), 0, realloc);
+    binheap_init(&uut, cmp, sizeof(int), TEST_SIZE, realloc);
 
-    for (i = 0; i < TEST_SIZE; i++)
-    {
-        bheap_push(&uut, &i);
-    }
+    assert(binheap_space(&uut) == TEST_SIZE);
+    assert(binheap_isempty(&uut));
 
-    assert(bheap_len(&uut) == TEST_SIZE);
-
-    bheap_free(&uut);
+    binheap_free(&uut);
 
     return 0;
 }

@@ -18,14 +18,14 @@ int main(int argc, char *argv[])
     struct binheap uut;
     int i = 0;
 
-    bheap_init(&uut, cmp, sizeof(int), 0, realloc);
+    binheap_init(&uut, cmp, sizeof(int), 0, realloc);
 
-    bheap_push(&uut, &i);
+    binheap_push(&uut, &i);
 
-    assert(bheap_len(&uut) == 1);
-    assert(!bheap_isempty(&uut));
+    assert(binheap_len(&uut) == 1);
+    assert(!binheap_isempty(&uut));
 
-    bheap_free(&uut);
+    binheap_free(&uut);
 
     return 0;
 }
