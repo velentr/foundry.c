@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
     assert(list_prev(&a) == list_end(&uut));
 
     list_remove(&a);
-    assert(list_empty(&uut));
+    assert(list_isempty(&uut));
 
     return 0;
 }

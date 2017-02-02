@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
 
     list_init(&uut);
 
-    assert(list_empty(&uut));
+    assert(list_isempty(&uut));
 
     return 0;
 }

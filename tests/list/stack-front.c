@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
         assert(e == &mem[TEST_SIZE - i - 1]);
     }
 
-    assert(list_empty(&uut));
+    assert(list_isempty(&uut));
 
     return 0;
 }

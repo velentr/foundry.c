@@ -101,7 +101,7 @@ void list_init(struct list *l);
  *
  * \return Returns the first element in the linked list \p l.
  */
-struct list_elem *list_begin(struct list *l);
+struct list_elem *list_begin(const struct list *l);
 
 /**
  * \brief Get the next element in the list.
@@ -115,7 +115,7 @@ struct list_elem *list_begin(struct list *l);
  *
  * \return Returns a pointer to the next element in the list.
  */
-struct list_elem *list_next(struct list_elem *e);
+struct list_elem *list_next(const struct list_elem *e);
 
 /**
  * \brief Get the previous element in the list.
@@ -130,7 +130,7 @@ struct list_elem *list_next(struct list_elem *e);
  *
  * \return Returns a pointer to the previous element in the list.
  */
-struct list_elem *list_prev(struct list_elem *e);
+struct list_elem *list_prev(const struct list_elem *e);
 
 /**
  * \brief Get a special end-of-list indicator.
@@ -148,7 +148,7 @@ struct list_elem *list_prev(struct list_elem *e);
  * \return Returns a pointer that indicates the end of the list has been
  *         reached.
  */
-struct list_elem *list_end(struct list *l);
+struct list_elem *list_end(const struct list *l);
 
 /**
  * \brief Get the first element from the list.
@@ -159,7 +159,7 @@ struct list_elem *list_end(struct list *l);
  *
  * \return Returns a pointer to the first element of \p l.
  */
-struct list_elem *list_head(struct list *l);
+struct list_elem *list_head(const struct list *l);
 
 /**
  * \brief Get the last element from the list.
@@ -170,7 +170,7 @@ struct list_elem *list_head(struct list *l);
  *
  * \return Returns a pointer to the last element of \p l.
  */
-struct list_elem *list_tail(struct list *l);
+struct list_elem *list_tail(const struct list *l);
 
 /**
  * \brief Insert a new element into a linked list.
@@ -250,7 +250,7 @@ struct list_elem *list_remove(struct list_elem *e);
  * \param l Pointer to the list from which to pop the first element.
  *
  * \pre <tt>l != NULL</tt>
- * \pre <tt>!list_empty(l)</tt>
+ * \pre <tt>!list_isempty(l)</tt>
  *
  * \return Returns a pointer to the element that was popped from \p l.
  */
@@ -268,7 +268,7 @@ struct list_elem *list_popfront(struct list *l);
  * \param l Pointer to the list from which to pop the last element.
  *
  * \pre <tt>l != NULL</tt>
- * \pre <tt>!list_empty(l)</tt>
+ * \pre <tt>!list_isempty(l)</tt>
  *
  * \return Returns a pointer to the element that was popped from \p l.
  */
@@ -288,7 +288,7 @@ struct list_elem *list_popback(struct list *l);
  *
  * \return Returns the number of elements in \p l.
  */
-size_t list_size(struct list *l);
+size_t list_size(const struct list *l);
 
 /**
  * \brief Determine if a list is empty.
@@ -303,7 +303,21 @@ size_t list_size(struct list *l);
  * \return Returns false if the list contains any elements. Returns true if
  *         there are no elements in the list.
  */
-int list_empty(struct list *l);
+int list_isempty(const struct list *l);
+
+/**
+ * \brief Concatenate two lists.
+ *
+ * Adds the list \p src onto the end of list \p dst such that after the function
+ * returns, \p dst will contain all previous elements as well as all elements of
+ * \p src. The head of \p dst will remain the same, but the new tail of \p dst
+ * will be the tail of \p src. The old tail of \p dst will be connected to the
+ * head of \p src. Note that \p src will be invalid after this operation.
+ *
+ * \param dst List to which \p src is appended.
+ * \param src List to append onto \p dst.
+ */
+void list_cat(struct list *dst, struct list *src);
 
 
 #endif /* end of include guard: _LIST_H_ */

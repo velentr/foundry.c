@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
     list_init(&uut);
     list_pushback(&uut, &e);
 
-    assert(!list_empty(&uut));
+    assert(!list_isempty(&uut));
     assert(list_head(&uut) == &e);
     assert(list_tail(&uut) == &e);
     assert(list_popback(&uut) == &e);

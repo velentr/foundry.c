@@ -46,7 +46,7 @@ void list_init(struct list *l)
 }
 
 /* Get the first element of the list, for iteration. */
-struct list_elem *list_begin(struct list *l)
+struct list_elem *list_begin(const struct list *l)
 {
     assert(l != NULL);
 
@@ -56,7 +56,7 @@ struct list_elem *list_begin(struct list *l)
 }
 
 /* Get the next element in the list, for iteration. */
-struct list_elem *list_next(struct list_elem *e)
+struct list_elem *list_next(const struct list_elem *e)
 {
     assert(e != NULL);
 
@@ -64,7 +64,7 @@ struct list_elem *list_next(struct list_elem *e)
 }
 
 /* Get the previous element in the list, for iteration. */
-struct list_elem *list_prev(struct list_elem *e)
+struct list_elem *list_prev(const struct list_elem *e)
 {
     assert(e != NULL);
 
@@ -72,15 +72,15 @@ struct list_elem *list_prev(struct list_elem *e)
 }
 
 /* Get the sentinal value that indicates the list iteration is complete. */
-struct list_elem *list_end(struct list *l)
+struct list_elem *list_end(const struct list *l)
 {
     assert(l != NULL);
 
-    return &l->sentinal;
+    return (struct list_elem *)&l->sentinal;
 }
 
 /* Get the first element from the list. */
-struct list_elem *list_head(struct list *l)
+struct list_elem *list_head(const struct list *l)
 {
     assert(l != NULL);
 
@@ -89,7 +89,7 @@ struct list_elem *list_head(struct list *l)
 }
 
 /* Get the last element from the list. */
-struct list_elem *list_tail(struct list *l)
+struct list_elem *list_tail(const struct list *l)
 {
     assert(l != NULL);
 
@@ -148,7 +148,7 @@ struct list_elem *list_popfront(struct list *l)
     struct list_elem *e;
 
     assert(l != NULL);
-    assert(!list_empty(l));
+    assert(!list_isempty(l));
 
     /* Get the first element and remove it. */
     e = list_head(l);
@@ -161,7 +161,7 @@ struct list_elem *list_popback(struct list *l)
     struct list_elem *e;
 
     assert(l != NULL);
-    assert(!list_empty(l));
+    assert(!list_isempty(l));
 
     /* Get the last element and remove it. */
     e = list_tail(l);
@@ -169,7 +169,7 @@ struct list_elem *list_popback(struct list *l)
 }
 
 /* Return the number of elements in the list. */
-size_t list_size(struct list *l)
+size_t list_size(const struct list *l)
 {
     struct list_elem *e;
     size_t num = 0;
@@ -186,10 +186,28 @@ size_t list_size(struct list *l)
 }
 
 /* Check if the given list contains any elements. */
-int list_empty(struct list *l)
+int list_isempty(const struct list *l)
 {
     assert(l != NULL);
 
     return (l->sentinal.prev == &l->sentinal);
+}
+
+/* Concatenate the lists. */
+void list_cat(struct list *dst, struct list *src)
+{
+    struct list_elem *head_src, *tail_src, *tail_dst;
+
+    if (list_isempty(src))
+        return;
+
+    head_src = list_head(src);
+    tail_src = list_tail(src);
+    tail_dst = list_tail(dst);
+
+    tail_dst->next = head_src;
+    head_src->prev = tail_dst;
+    tail_src->next = &dst->sentinal;
+    dst->sentinal.prev = tail_src;
 }
 
