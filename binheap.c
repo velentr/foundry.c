@@ -318,7 +318,7 @@ static int _checkheap(const struct binheap *bh)
  * specific reason to limit the size of the vector. Note that this argument is
  * given in bytes, not number of elements.
  */
-int binheap_init(struct binheap *bh, HeapCompare cmp, size_t elemsize,
+int binheap_init(struct binheap *bh, cmp_func cmp, size_t elemsize,
         size_t size, void *(*alloc)(void *, size_t))
 {
     assert(bh != NULL);

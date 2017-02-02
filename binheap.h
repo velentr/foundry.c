@@ -42,9 +42,7 @@
 #ifndef _BINHEAP_H_
 #define _BINHEAP_H_
 
-/**
- * Need to use the vector for internal storage on the binary heap.
- */
+#include "utils.h"
 #include "vector.h"
 
 /**
@@ -53,29 +51,6 @@
  */
 #define DEF_BINHEAP_LEN  DEF_VEC_LEN
 
-
-/**
- * \brief Pointer to a function that is used for comparing two items on a heap.
- *
- * The function should compare the two elements and return a number less than,
- * equal to, or greater than zero if the first element is respectively less
- * than, equal to, or greater than the second element. The magnitude of the
- * return value does not matter, just the sign.
- *
- * \param a The first element to compare.
- * \param b The second element to compare.
- *
- * \return Returns an integer that is used to determine which element is
- * smaller, for sorting in the heap. Returns less than, equal to, or greater
- * than zero if the first argument is respectively less than, equal to, or
- * greater than the second argument.
- *
- * \note Generally, a function pointer like this should have a scratch argument
- * so global variables are not needed. However, in a heap, there should not be
- * any global state that affects the sorting order, so a scratch argument
- * shouldn't be necessary in this case.
- */
-typedef int (*HeapCompare)(const void *a, const void *b);
 
 /**
  * \brief Memory for storing a binary heap.
@@ -107,13 +82,13 @@ typedef int (*HeapCompare)(const void *a, const void *b);
 struct binheap
 {
     struct vector vec; /**< Vector holding all the elements in the heap. */
-    HeapCompare cmp;   /**< Comparison function used for sorting the elements on
-                            the heap. See the description of the HeapCompare
-                            typedef for more information. */
+    cmp_func cmp;      /**< Comparison function used for sorting the elements on
+                            the heap. This function will be passed pointer to
+                            elements in the heap as arguments. */
 };
 
 
-int binheap_init(struct binheap *bh, HeapCompare cmp, size_t elemsize,
+int binheap_init(struct binheap *bh, cmp_func cmp, size_t elemsize,
         size_t size, void *(*alloc)(void *, size_t));
 int binheap_push(struct binheap *bh, void *e);
 int binheap_pop(struct binheap *bh);

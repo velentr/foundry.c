@@ -44,6 +44,7 @@
 
 
 #include "list.h"
+#include "utils.h"
 
 /**
  * \brief Element stored in a hash table.
@@ -75,27 +76,6 @@ struct hash_elem
 typedef size_t (*hasher)(struct hash_elem *e, size_t numbuckets);
 
 /**
- * \brief Function for comparing two hash table elements.
- *
- * The function should compare two hash elements and return a number that is
- * less than, equal to, or greater than zero if the first element is
- * respectively less than, equal to, or greater than the second element. The
- * magnitude of the returned value does not matter, just the sign.
- *
- * \param a The first element to compare.
- * \param b The second element to compare.
- *
- * \return Returns an integer that is used to determine which element is
- * smaller, for sorting in the hash table. Returns less than, equal to, or
- * greater than zero if the first argument is respectively less than, equal to,
- * or greater than the second argument.
- *
- * \note The current implementation does not actually sort elements in each
- * bucket; this is just used to determine equality of two elements.
- */
-typedef int (*hcompar)(struct hash_elem *a, struct hash_elem *b);
-
-/**
  * \brief Hash table for associative arrays of objects.
  *
  * The hash table is implemented as an array of linked lists. Each slot in the
@@ -110,7 +90,8 @@ struct hash_table
 {
     struct list *buckets; /**< Memory for holding the buckets of the table. */
     hasher hash;          /**< Function for hashing elements. */
-    hcompar cmp;          /**< Function for comparing elements. */
+    cmp_func cmp;         /**< Function for comparing elements. Passed pointers
+                            to \c hash_elems as arguments. */
     size_t len;           /**< Length of the \c buckets array. */
 };
 
@@ -133,7 +114,7 @@ struct hash_table
  * \pre <tt>cmp != NULL</tt>
  */
 void ht_init(struct hash_table *ht, struct list *buckets, size_t num,
-        hasher hash, hcompar cmp);
+        hasher hash, cmp_func cmp);
 
 /**
  * \brief Insert a new element into the hash table.

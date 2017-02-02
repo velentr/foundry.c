@@ -56,6 +56,23 @@
 #define containerof(ELEM, STRUCT, MEMBER) ((STRUCT *)((size_t) (ELEM) \
             - offsetof(STRUCT, MEMBER)))
 
+/**
+ * \brief Pointer to a function that is used for comparing two items.
+ *
+ * The function should compare the two items and return a number less than,
+ * equal to, or greater than zero if the first item is respectively less than,
+ * equal to, or greater than the second item. The magnitude of the return value
+ * does not matter, just the sign.
+ *
+ * \param [in] a The first item to compare.
+ * \param [in] b The second item to compare.
+ *
+ * \return Returns an integer that is used to determine which item is smaller,
+ * usually for sorting. Returns less than, equal to, or greater than zero if the
+ * first argument is respectively less than, equal to, or greater than the
+ * second argument.
+ */
+typedef int (*cmp_func)(const void *, const void *);
 
 
 #endif /* end of include guard: _UTILS_H_ */

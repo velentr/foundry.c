@@ -37,7 +37,7 @@
 
 /* Initialize all the members in the hash table. */
 void ht_init(struct hash_table *ht, struct list *buckets, size_t num,
-        hasher hash, hcompar cmp)
+        hasher hash, cmp_func cmp)
 {
     size_t i;
 
@@ -96,7 +96,7 @@ struct hash_elem *ht_get(struct hash_table *ht, struct hash_elem *key)
     struct list *bucket;   /* Bucket to search through for key. */
     struct hash_elem *rc;  /* Hash element to return. */
     struct list_elem *le;  /* Iterator for the bucket containing key. */
-    hcompar cmp;           /* Comparator function. */
+    cmp_func cmp;          /* Comparator function. */
 
     assert(ht != NULL);
     assert(key != NULL);
