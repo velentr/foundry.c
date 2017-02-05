@@ -70,17 +70,46 @@ struct list
 };
 
 
+void list_init(struct list *l);
+void list_insert(struct list_elem *prev, struct list_elem *to_add);
+struct list_elem *list_remove(struct list_elem *e);
+struct list_elem *list_popfront(struct list *l);
+struct list_elem *list_popback(struct list *l);
+size_t list_size(const struct list *l);
+void list_cat(struct list *dst, struct list *src);
+
 /**
- * \brief Initialize a linked list structure.
+ * \brief Get the first element from the list.
  *
- * Set the pointers in the given linked list structure to valid initial values.
- * This function should be called before any other functions can be used.
- *
- * \param l Pointer to the linked list to initialize.
+ * \param l Pointer to the linked list to get the first element from.
  *
  * \pre <tt>l != NULL</tt>
+ *
+ * \return Returns a pointer to the first element of \p l.
  */
-void list_init(struct list *l);
+static inline struct list_elem *list_head(const struct list *l)
+{
+    assert(l != NULL);
+
+    /* Get the first valid (non-sentinal) element in the list, and return it. */
+    return l->sentinal.next;
+}
+
+/**
+ * \brief Get the last element from the list.
+ *
+ * \param l Pointer to the linked list to get the last element from.
+ *
+ * \pre <tt>l != NULL</tt>
+ *
+ * \return Returns a pointer to the last element of \p l.
+ */
+static inline struct list_elem *list_tail(const struct list *l)
+{
+    assert(l != NULL);
+
+    return l->sentinal.prev;
+}
 
 /**
  * \brief Get the beginning of the list for iteration.
@@ -101,7 +130,14 @@ void list_init(struct list *l);
  *
  * \return Returns the first element in the linked list \p l.
  */
-struct list_elem *list_begin(const struct list *l);
+static inline struct list_elem *list_begin(const struct list *l)
+{
+    assert(l != NULL);
+
+    /* When iterating forwards, the beginning is the first valid (non-sentinal
+     * element in the list. */
+    return list_head(l);
+}
 
 /**
  * \brief Get the next element in the list.
@@ -115,7 +151,12 @@ struct list_elem *list_begin(const struct list *l);
  *
  * \return Returns a pointer to the next element in the list.
  */
-struct list_elem *list_next(const struct list_elem *e);
+static inline struct list_elem *list_next(const struct list_elem *e)
+{
+    assert(e != NULL);
+
+    return e->next;
+}
 
 /**
  * \brief Get the previous element in the list.
@@ -130,7 +171,12 @@ struct list_elem *list_next(const struct list_elem *e);
  *
  * \return Returns a pointer to the previous element in the list.
  */
-struct list_elem *list_prev(const struct list_elem *e);
+static inline struct list_elem *list_prev(const struct list_elem *e)
+{
+    assert(e != NULL);
+
+    return e->prev;
+}
 
 /**
  * \brief Get a special end-of-list indicator.
@@ -148,47 +194,12 @@ struct list_elem *list_prev(const struct list_elem *e);
  * \return Returns a pointer that indicates the end of the list has been
  *         reached.
  */
-struct list_elem *list_end(const struct list *l);
+static inline struct list_elem *list_end(const struct list *l)
+{
+    assert(l != NULL);
 
-/**
- * \brief Get the first element from the list.
- *
- * \param l Pointer to the linked list to get the first element from.
- *
- * \pre <tt>l != NULL</tt>
- *
- * \return Returns a pointer to the first element of \p l.
- */
-struct list_elem *list_head(const struct list *l);
-
-/**
- * \brief Get the last element from the list.
- *
- * \param l Pointer to the linked list to get the last element from.
- *
- * \pre <tt>l != NULL</tt>
- *
- * \return Returns a pointer to the last element of \p l.
- */
-struct list_elem *list_tail(const struct list *l);
-
-/**
- * \brief Insert a new element into a linked list.
- *
- * Inserts the list element \p new immediately after \p old in a linked list.
- * Note that \p old does not have to be in an existing list in order for the
- * function to work.
- *
- * \warning If \p new is already in a list \c l, then calling this function will
- * break \c l.
- *
- * \param old Pointer to a list element after which to insert \p new.
- * \param new Pointer to a list element to add to the list containing \p old.
- *
- * \pre <tt>old != NULL</tt>
- * \pre <tt>new != NULL</tt>
- */
-void list_insert(struct list_elem *old, struct list_elem *new);
+    return (struct list_elem *)&l->sentinal;
+}
 
 /**
  * \brief Push an element onto the front of a list.
@@ -203,7 +214,13 @@ void list_insert(struct list_elem *old, struct list_elem *new);
  * \pre <tt>l != NULL</tt>
  * \pre <tt>e != NULL</tt>
  */
-void list_pushfront(struct list *l, struct list_elem *e);
+static inline void list_pushfront(struct list *l, struct list_elem *e)
+{
+    assert(l != NULL);
+    assert(e != NULL);
+
+    list_insert(&l->sentinal, e);
+}
 
 /**
  * \brief Push an element onto the end of a list.
@@ -218,77 +235,14 @@ void list_pushfront(struct list *l, struct list_elem *e);
  * \pre <tt>l != NULL</tt>
  * \pre <tt>e != NULL</tt>
  */
-void list_pushback(struct list *l, struct list_elem *e);
+static inline void list_pushback(struct list *l, struct list_elem *e)
+{
+    assert(l != NULL);
+    assert(l->sentinal.prev != NULL);
+    assert(e != NULL);
 
-/**
- * \brief Remove the given item from its containing list.
- *
- * The list will be relinked so that \p e is removed without breaking the
- * continuity of the list.
- *
- * \warning This function will exhibit undefined behavior if \p e is not already
- * in a list.
- *
- * \param e Element to remove from the list.
- *
- * \pre <tt>e != NULL</tt>
- *
- * \return Returns \p e. This is used for convenience in the internal
- *         implementation.
- */
-struct list_elem *list_remove(struct list_elem *e);
-
-/**
- * \brief Pop an element from the front of a list.
- *
- * Removes the first element from the list \p l and returns it. Can be used with
- * #list_pushfront() to implement a stack, or with #list_pushback() to implement
- * a queue.
- *
- * \warning This will exhibit undefined behavior if \p l is an empty list.
- *
- * \param l Pointer to the list from which to pop the first element.
- *
- * \pre <tt>l != NULL</tt>
- * \pre <tt>!list_isempty(l)</tt>
- *
- * \return Returns a pointer to the element that was popped from \p l.
- */
-struct list_elem *list_popfront(struct list *l);
-
-/**
- * \brief Pop an element from the end of a list.
- *
- * Removes the last element from the list \p l and returns it. Can be used with
- * #list_pushback() to implement a stack, or with #list_pushfront() to implement
- * a queue.
- *
- * \warning This will exhibit undefined behavior if \p l is an empty list.
- *
- * \param l Pointer to the list from which to pop the last element.
- *
- * \pre <tt>l != NULL</tt>
- * \pre <tt>!list_isempty(l)</tt>
- *
- * \return Returns a pointer to the element that was popped from \p l.
- */
-struct list_elem *list_popback(struct list *l);
-
-/**
- * \brief Compute the size of the linked list.
- *
- * Counts the number of elements in the list by iterating over all the elements.
- * This function will take O(n) time with respect to the length of the list. Due
- * to the sparse nature of the list, it is impractical to compute the length in
- * constant time.
- *
- * \param l Pointer to the list of which to get the size.
- *
- * \pre <tt>l != NULL</tt>
- *
- * \return Returns the number of elements in \p l.
- */
-size_t list_size(const struct list *l);
+    list_insert(l->sentinal.prev, e);
+}
 
 /**
  * \brief Determine if a list is empty.
@@ -303,21 +257,12 @@ size_t list_size(const struct list *l);
  * \return Returns false if the list contains any elements. Returns true if
  *         there are no elements in the list.
  */
-int list_isempty(const struct list *l);
+static inline int list_isempty(const struct list *l)
+{
+    assert(l != NULL);
 
-/**
- * \brief Concatenate two lists.
- *
- * Adds the list \p src onto the end of list \p dst such that after the function
- * returns, \p dst will contain all previous elements as well as all elements of
- * \p src. The head of \p dst will remain the same, but the new tail of \p dst
- * will be the tail of \p src. The old tail of \p dst will be connected to the
- * head of \p src. Note that \p src will be invalid after this operation.
- *
- * \param dst List to which \p src is appended.
- * \param src List to append onto \p dst.
- */
-void list_cat(struct list *dst, struct list *src);
+    return (l->sentinal.prev == &l->sentinal);
+}
 
 
 #endif /* end of include guard: _LIST_H_ */

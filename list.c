@@ -33,7 +33,16 @@
 
 #include "list.h"
 
-/* Initialize the given list. */
+/**
+ * \brief Initialize a linked list structure.
+ *
+ * Set the pointers in the given linked list structure to valid initial values.
+ * This function should be called before any other functions can be used.
+ *
+ * \param l Pointer to the linked list to initialize.
+ *
+ * \pre <tt>l != NULL</tt>
+ */
 void list_init(struct list *l)
 {
     assert(l != NULL);
@@ -45,92 +54,53 @@ void list_init(struct list *l)
     l->sentinal.prev = l->sentinal.next = &l->sentinal;
 }
 
-/* Get the first element of the list, for iteration. */
-struct list_elem *list_begin(const struct list *l)
+/**
+ * \brief Insert a new element into a linked list.
+ *
+ * Inserts the list element \p to_add immediately after \p prev in a linked
+ * list.  Note that \p prev does not have to be in an existing list in order for
+ * the function to work.
+ *
+ * \warning If \p to_add is already in a list \c l, then calling this function
+ * will break \c l.
+ *
+ * \param [in] prev Pointer to a list element after which to insert \p to_add.
+ * \param [in] to_add Pointer to a list element to add to the list containing \p
+ * prev.
+ *
+ * \pre <tt>prev != NULL</tt>
+ * \pre <tt>to_add != NULL</tt>
+ */
+void list_insert(struct list_elem *prev, struct list_elem *to_add)
 {
-    assert(l != NULL);
+    assert(prev != NULL);
+    assert(to_add != NULL);
 
-    /* When iterating forwards, the beginning is the first valid (non-sentinal
-     * element in the list. */
-    return list_head(l);
+    /* Update the pointers in 'to_add'. */
+    to_add->next = prev->next;
+    to_add->prev = prev;
+
+    /* Insert 'to_add' immediately following 'prev'. */
+    prev->next->prev = to_add;
+    prev->next = to_add;
 }
 
-/* Get the next element in the list, for iteration. */
-struct list_elem *list_next(const struct list_elem *e)
-{
-    assert(e != NULL);
-
-    return e->next;
-}
-
-/* Get the previous element in the list, for iteration. */
-struct list_elem *list_prev(const struct list_elem *e)
-{
-    assert(e != NULL);
-
-    return e->prev;
-}
-
-/* Get the sentinal value that indicates the list iteration is complete. */
-struct list_elem *list_end(const struct list *l)
-{
-    assert(l != NULL);
-
-    return (struct list_elem *)&l->sentinal;
-}
-
-/* Get the first element from the list. */
-struct list_elem *list_head(const struct list *l)
-{
-    assert(l != NULL);
-
-    /* Get the first valid (non-sentinal) element in the list, and return it. */
-    return l->sentinal.next;
-}
-
-/* Get the last element from the list. */
-struct list_elem *list_tail(const struct list *l)
-{
-    assert(l != NULL);
-
-    return l->sentinal.prev;
-}
-
-/* Insert the new element immediately following the given old element. */
-void list_insert(struct list_elem *old, struct list_elem *new)
-{
-    assert(old != NULL);
-    assert(new != NULL);
-
-    /* Update the pointers in 'new'. */
-    new->next = old->next;
-    new->prev = old;
-
-    /* Insert 'new' immediately following 'old'. */
-    old->next->prev = new;
-    old->next = new;
-}
-
-/* Insert the given element at the front of the list. */
-void list_pushfront(struct list *l, struct list_elem *e)
-{
-    assert(l != NULL);
-    assert(e != NULL);
-
-    list_insert(&l->sentinal, e);
-}
-
-/* Insert the given element at the back of the list. */
-void list_pushback(struct list *l, struct list_elem *e)
-{
-    assert(l != NULL);
-    assert(l->sentinal.prev != NULL);
-    assert(e != NULL);
-
-    list_insert(l->sentinal.prev, e);
-}
-
-/* Remove the given element from its list. */
+/**
+ * \brief Remove the given item from its containing list.
+ *
+ * The list will be relinked so that \p e is removed without breaking the
+ * continuity of the list.
+ *
+ * \warning This function will exhibit undefined behavior if \p e is not already
+ * in a list.
+ *
+ * \param e Element to remove from the list.
+ *
+ * \pre <tt>e != NULL</tt>
+ *
+ * \return Returns \p e. This is used for convenience in the internal
+ *         implementation.
+ */
 struct list_elem *list_remove(struct list_elem *e)
 {
     assert(e != NULL);
@@ -142,7 +112,22 @@ struct list_elem *list_remove(struct list_elem *e)
     return e;
 }
 
-/* Remove the first element in the list, and return it. */
+/**
+ * \brief Pop an element from the front of a list.
+ *
+ * Removes the first element from the list \p l and returns it. Can be used with
+ * #list_pushfront() to implement a stack, or with #list_pushback() to implement
+ * a queue.
+ *
+ * \warning This will exhibit undefined behavior if \p l is an empty list.
+ *
+ * \param l Pointer to the list from which to pop the first element.
+ *
+ * \pre <tt>l != NULL</tt>
+ * \pre <tt>!list_isempty(l)</tt>
+ *
+ * \return Returns a pointer to the element that was popped from \p l.
+ */
 struct list_elem *list_popfront(struct list *l)
 {
     struct list_elem *e;
@@ -155,7 +140,22 @@ struct list_elem *list_popfront(struct list *l)
     return list_remove(e);
 }
 
-/* Remove the last element in the list, and return it. */
+/**
+ * \brief Pop an element from the end of a list.
+ *
+ * Removes the last element from the list \p l and returns it. Can be used with
+ * #list_pushback() to implement a stack, or with #list_pushfront() to implement
+ * a queue.
+ *
+ * \warning This will exhibit undefined behavior if \p l is an empty list.
+ *
+ * \param l Pointer to the list from which to pop the last element.
+ *
+ * \pre <tt>l != NULL</tt>
+ * \pre <tt>!list_isempty(l)</tt>
+ *
+ * \return Returns a pointer to the element that was popped from \p l.
+ */
 struct list_elem *list_popback(struct list *l)
 {
     struct list_elem *e;
@@ -168,7 +168,20 @@ struct list_elem *list_popback(struct list *l)
     return list_remove(e);
 }
 
-/* Return the number of elements in the list. */
+/**
+ * \brief Compute the size of the linked list.
+ *
+ * Counts the number of elements in the list by iterating over all the elements.
+ * This function will take O(n) time with respect to the length of the list. Due
+ * to the sparse nature of the list, it is impractical to compute the length in
+ * constant time.
+ *
+ * \param l Pointer to the list of which to get the size.
+ *
+ * \pre <tt>l != NULL</tt>
+ *
+ * \return Returns the number of elements in \p l.
+ */
 size_t list_size(const struct list *l)
 {
     struct list_elem *e;
@@ -185,15 +198,18 @@ size_t list_size(const struct list *l)
     return num;
 }
 
-/* Check if the given list contains any elements. */
-int list_isempty(const struct list *l)
-{
-    assert(l != NULL);
-
-    return (l->sentinal.prev == &l->sentinal);
-}
-
-/* Concatenate the lists. */
+/**
+ * \brief Concatenate two lists.
+ *
+ * Adds the list \p src onto the end of list \p dst such that after the function
+ * returns, \p dst will contain all previous elements as well as all elements of
+ * \p src. The head of \p dst will remain the same, but the new tail of \p dst
+ * will be the tail of \p src. The old tail of \p dst will be connected to the
+ * head of \p src. Note that \p src will be invalid after this operation.
+ *
+ * \param dst List to which \p src is appended.
+ * \param src List to append onto \p dst.
+ */
 void list_cat(struct list *dst, struct list *src)
 {
     struct list_elem *head_src, *tail_src, *tail_dst;
