@@ -39,7 +39,7 @@
  * Set the pointers in the given linked list structure to valid initial values.
  * This function should be called before any other functions can be used.
  *
- * \param l Pointer to the linked list to initialize.
+ * \param [in,out] l Pointer to the linked list to initialize.
  *
  * \pre <tt>l != NULL</tt>
  */
@@ -94,7 +94,7 @@ void list_insert(struct list_elem *prev, struct list_elem *to_add)
  * \warning This function will exhibit undefined behavior if \p e is not already
  * in a list.
  *
- * \param e Element to remove from the list.
+ * \param [in] e Element to remove from the list.
  *
  * \pre <tt>e != NULL</tt>
  *
@@ -121,7 +121,7 @@ struct list_elem *list_remove(struct list_elem *e)
  *
  * \warning This will exhibit undefined behavior if \p l is an empty list.
  *
- * \param l Pointer to the list from which to pop the first element.
+ * \param [in] l Pointer to the list from which to pop the first element.
  *
  * \pre <tt>l != NULL</tt>
  * \pre <tt>!list_isempty(l)</tt>
@@ -149,7 +149,7 @@ struct list_elem *list_popfront(struct list *l)
  *
  * \warning This will exhibit undefined behavior if \p l is an empty list.
  *
- * \param l Pointer to the list from which to pop the last element.
+ * \param [in] l Pointer to the list from which to pop the last element.
  *
  * \pre <tt>l != NULL</tt>
  * \pre <tt>!list_isempty(l)</tt>
@@ -176,7 +176,7 @@ struct list_elem *list_popback(struct list *l)
  * to the sparse nature of the list, it is impractical to compute the length in
  * constant time.
  *
- * \param l Pointer to the list of which to get the size.
+ * \param [in] l Pointer to the list of which to get the size.
  *
  * \pre <tt>l != NULL</tt>
  *
@@ -207,8 +207,8 @@ size_t list_size(const struct list *l)
  * will be the tail of \p src. The old tail of \p dst will be connected to the
  * head of \p src. Note that \p src will be invalid after this operation.
  *
- * \param dst List to which \p src is appended.
- * \param src List to append onto \p dst.
+ * \param [out] dst List to which \p src is appended.
+ * \param [in] src List to append onto \p dst.
  */
 void list_cat(struct list *dst, struct list *src)
 {

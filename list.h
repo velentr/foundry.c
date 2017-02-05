@@ -81,7 +81,7 @@ void list_cat(struct list *dst, struct list *src);
 /**
  * \brief Get the first element from the list.
  *
- * \param l Pointer to the linked list to get the first element from.
+ * \param [in] l Pointer to the linked list to get the first element from.
  *
  * \pre <tt>l != NULL</tt>
  *
@@ -98,7 +98,7 @@ static inline struct list_elem *list_head(const struct list *l)
 /**
  * \brief Get the last element from the list.
  *
- * \param l Pointer to the linked list to get the last element from.
+ * \param [in] l Pointer to the linked list to get the last element from.
  *
  * \pre <tt>l != NULL</tt>
  *
@@ -124,7 +124,7 @@ static inline struct list_elem *list_tail(const struct list *l)
  * }
  * \endcode
  *
- * \param l Pointer to the linked list to start iterating over.
+ * \param [in] l Pointer to the linked list to start iterating over.
  *
  * \pre <tt>l != NULL</tt>
  *
@@ -145,7 +145,7 @@ static inline struct list_elem *list_begin(const struct list *l)
  * Iterate over a linked list by getting the element after \p e in the list. See
  * #list_begin() to see how to iterate over the entire list.
  *
- * \param e Pointer to the current element in the list.
+ * \param [in] e Pointer to the current element in the list.
  *
  * \pre <tt>e != NULL</tt>
  *
@@ -165,7 +165,7 @@ static inline struct list_elem *list_next(const struct list_elem *e)
  * the list. See #list_begin() for an example of how to iterate over a linked
  * list.
  *
- * \param e Pointer to the current element in the list.
+ * \param [in] e Pointer to the current element in the list.
  *
  * \pre <tt>e != NULL</tt>
  *
@@ -186,7 +186,7 @@ static inline struct list_elem *list_prev(const struct list_elem *e)
  * been reached. See #list_begin() for an example of how to iterate over the
  * list.
  *
- * \param l Pointer to the linked list for which to get the end-of-list
+ * \param [in] l Pointer to the linked list for which to get the end-of-list
  *          indicator.
  *
  * \pre <tt>l != NULL</tt>
@@ -208,8 +208,8 @@ static inline struct list_elem *list_end(const struct list *l)
  * #list_popfront() to implement a simple stack, or with #list_popback() to
  * implement a simple queue.
  *
- * \param l Pointer to the list where \p e will be pushed.
- * \param e Pointer to the element to add to the front of \p l.
+ * \param [out] l Pointer to the list where \p e will be pushed.
+ * \param [in] e Pointer to the element to add to the front of \p l.
  *
  * \pre <tt>l != NULL</tt>
  * \pre <tt>e != NULL</tt>
@@ -229,8 +229,8 @@ static inline void list_pushfront(struct list *l, struct list_elem *e)
  * #list_popback() to implement a simple stack, or with #list_popfront() to
  * implement a simple queue.
  *
- * \param l Pointer to the list where \p e will be pushed.
- * \param e Pointer to the element to add to the end of \p l.
+ * \param [out] l Pointer to the list where \p e will be pushed.
+ * \param [in] e Pointer to the element to add to the end of \p l.
  *
  * \pre <tt>l != NULL</tt>
  * \pre <tt>e != NULL</tt>
@@ -250,7 +250,7 @@ static inline void list_pushback(struct list *l, struct list_elem *e)
  * Constant-time operation for calculating whether or not the given list
  * contains any elements.
  *
- * \param l Pointer to the list on which to determine emptyness.
+ * \param [in] l Pointer to the list on which to determine emptyness.
  *
  * \pre <tt>l != NULL</tt>
  *
