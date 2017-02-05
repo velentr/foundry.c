@@ -35,7 +35,24 @@
 #include "list.h"
 #include "utils.h"
 
-/* Initialize all the members in the hash table. */
+/**
+ * \brief Initialize a hash table structure.
+ *
+ * Gives a block of memory to the hash table to use for the buckets, and
+ * provides hashing and comparison functions for storing the elements.
+ *
+ * \param [in,out] ht Pointer to the hash table to initialize.
+ * \param [in] buckets Memory block to store the buckets of the hash table.
+ * \param [in] num Number of buckets that can be stored in \p buckets.
+ * \param [in] hash Function for computing the hash of an element.
+ * \param [in] cmp Function for detecting whether two hash elements are equal.
+ *
+ * \pre <tt>ht != NULL</tt>
+ * \pre <tt>buckets != NULL</tt>
+ * \pre <tt>num > 0</tt>
+ * \pre <tt>hash != NULL</tt>
+ * \pre <tt>cmp != NULL</tt>
+ */
 void ht_init(struct hash_table *ht, struct list *buckets, size_t num,
         hasher hash, cmp_func cmp)
 {
@@ -60,7 +77,23 @@ void ht_init(struct hash_table *ht, struct list *buckets, size_t num,
     }
 }
 
-/* Insert an element into the hash table. */
+/**
+ * \brief Insert a new element into the hash table.
+ *
+ * Assumes that an equivalent element is not already in the hash table. In order
+ * to check this, the user should first check that #ht_get() returns a \c NULL
+ * pointer. Also assumes that the given \p he is not already in a hash table.
+ *
+ * \param [out] ht Pointer to the hash table in which to insert the element.
+ * \param [in] he Pointer to the new element to insert.
+ *
+ * \pre <tt>ht != NULL</tt>
+ * \pre <tt>he != NULL</tt>
+ * \pre <tt>ht_get(ht, he) == NULL</tt>
+ *
+ * \note Calling #ht_insert() on an element that is already contained in a hash
+ * table will break the hash table that it is already in.
+ */
 void ht_insert(struct hash_table *ht, struct hash_elem *he)
 {
     /* Hash value for the given key. */
@@ -79,18 +112,25 @@ void ht_insert(struct hash_table *ht, struct hash_elem *he)
     list_pushfront(&ht->buckets[hval], &he->le);
 }
 
-/* Remove an existing hash element from its containing hash table. */
-struct hash_elem *ht_remove(struct hash_elem *he)
-{
-    assert(he != NULL);
-
-    (void)list_remove(&he->le);
-
-    return he;
-}
-
-/* Get an element from the given hash table that is equal to the given key. */
-struct hash_elem *ht_get(struct hash_table *ht, struct hash_elem *key)
+/**
+ * \brief Finds the hash element matching \p key from the given hash table.
+ *
+ * Searches through \p ht until an element \c he is found such that
+ * <tt>ht->cmp(key, he) == 0</tt>. If no such element exists in the hash table,
+ * then \c NULL is returned.
+ *
+ * \param [in] ht Pointer to hash table to search for the element matching \p
+ * key.
+ * \param [in] key Pointer to a hash element to use as a key for the search.
+ *
+ * \pre <tt>ht != NULL</tt>
+ * \pre <tt>key != NULL</tt>
+ *
+ * \return Returns a pointer to an element in the table with a matching key. If
+ * no such element is found, returns \c NULL.
+ */
+struct hash_elem *ht_get(const struct hash_table *ht,
+        const struct hash_elem *key)
 {
     size_t hval;           /* Hash value for the given key. */
     struct list *bucket;   /* Bucket to search through for key. */
@@ -127,7 +167,25 @@ struct hash_elem *ht_get(struct hash_table *ht, struct hash_elem *key)
     return rc;
 }
 
-/* Use a different block of memory for the hash table. */
+/**
+ * \brief Give the hash table a different block of memory to use.
+ *
+ * Tells the hash table to use the array \p buckets for storing all of its
+ * elements. This will usually be used to increase the memory pool when the
+ * number of collisions gets too high.
+ *
+ * \param [out] ht Pointer to the hash table that should use \p buckets.
+ * \param [in] buckets Array of lists to use for storing buckets in the hash
+ * table.
+ * \param [in] num The length of the \p buckets array.
+ *
+ * \pre <tt>ht != NULL</tt>
+ * \pre <tt>buckets != NULL</tt>
+ * \pre <tt>num > 0</tt>
+ *
+ * \return Returns a pointer to the old array used to store the buckets. This
+ * array may be freed after the call if it is no longer needed.
+ */
 struct list *ht_rehash(struct hash_table *ht, struct list *buckets, size_t num)
 {
     struct list *old_buckets;   /* Old memory pool for the buckets. */
@@ -164,8 +222,20 @@ struct list *ht_rehash(struct hash_table *ht, struct list *buckets, size_t num)
     return old_buckets;
 }
 
-/* Get the number of elements stored in the given hash table. */
-size_t ht_size(struct hash_table *ht)
+/**
+ * \brief Get the number of elements stored in the hash table.
+ *
+ * Due to the way that some of the hash operations work, this function must
+ * iterate over the entire table to count its contents; this can get pretty
+ * slow, so it may be better to record this information elsewhere.
+ *
+ * \param [in] ht Pointer to the hash table to count the elements of.
+ *
+ * \pre <tt>ht != NULL</tt>
+ *
+ * \return Returns the number of elements currently stored in the hash table.
+ */
+size_t ht_size(const struct hash_table *ht)
 {
     size_t nelems;          /* Counter of the number of elements in ht. */
     size_t len;             /* Length of the array of buckets. */
@@ -188,16 +258,17 @@ size_t ht_size(struct hash_table *ht)
     return nelems;
 }
 
-/* Get the number of buckets in the hash table. */
-size_t ht_space(struct hash_table *ht)
-{
-    assert(ht != NULL);
-
-    return ht->len;
-}
-
-/* See if the given hash table is empty. */
-int ht_isempty(struct hash_table *ht)
+/**
+ * \brief Determine whether or not a hash table is empty.
+ *
+ * \param [in] ht Pointer to the hash table to check for emptiness.
+ *
+ * \pre <tt>ht != NULL</tt>
+ *
+ * \return Returns zero if the hash table contains any elements. Returns nonzero
+ * if the hash table is empty.
+ */
+int ht_isempty(const struct hash_table *ht)
 {
     size_t i;
     size_t len;
