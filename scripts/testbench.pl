@@ -2,25 +2,23 @@
 
 use strict;
 
-my @results;
+my $total = 0;
+my $passed = 0;
 
 foreach (@ARGV)
 {
-    print "------\nTesting $_:\n";
-    push @results, system "./$_";
-    print "Done testing $_.\n";
-}
+    $total++;
 
-print "\n------\n";
-my $failcount = 0;
-for my $i (0 .. $#results)
-{
-    if ($results[$i] != 0)
+    my $result = `./$_ 2>&1`;
+    if ($result)
     {
-        print "Test $ARGV[$i] failed.\n";
-        $failcount++;
+        print "\n--------\n$_ failed: $result--------\n";
+    }
+    else
+    {
+        print ".";
+        $passed++;
     }
 }
 
-my $count = $#results + 1;
-print "\n------\nFailed $failcount / $count tests.\n";
+print "\n--------\nPassed $passed / $total.\n";
