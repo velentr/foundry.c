@@ -27,6 +27,24 @@
  * \file pheap.h
  *
  * \brief Arbitrarily large pairing heaps.
+ *
+ * A pairing heap is a heap data structure built using pointers that has
+ * relatively low asymptotic and practical performance. All operations have
+ * amortized asymptotic time equivalent to Fibonacci heaps, but with a much
+ * simpler implementation and lower constants.
+ *
+ * This implementation supports a min-heap without using any dynamic memory
+ * allocation (all memory is allocated by the caller), embedding pointers within
+ * container structures in order to simplify memory usage.
+ *
+ * Pairing heaps were invented by Fredman, Sedgewick, Sleator, and Tarjan,
+ * inspired by splay trees. For more information, see
+ * https://en.wikipedia.org/wiki/Pairing_heap
+ *
+ * \author Brian Kubisiak
+ *
+ * \copyright This is free and unencumbered software released into the public
+ * domain.
  */
 
 #ifndef _PHEAP_H_
@@ -74,7 +92,7 @@ void pheap_elem_init(struct pheap_elem *pe);
 void pheap_init(struct pheap *ph, cmp_func cmp);
 struct pheap_elem *pheap_peek(const struct pheap *ph);
 void pheap_push(struct pheap *ph, struct pheap_elem *pe);
-void pheap_pop(struct pheap *ph);
+struct pheap_elem *pheap_pop(struct pheap *ph);
 void pheap_merge(struct pheap *dst, struct pheap *src);
 int pheap_isempty(struct pheap *ph);
 

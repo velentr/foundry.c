@@ -28,6 +28,19 @@
  *
  * \brief Arbitrarily large pairing heaps.
  *
+ * A pairing heap is a heap data structure built using pointers that has
+ * relatively low asymptotic and practical performance. All operations have
+ * amortized asymptotic time equivalent to Fibonacci heaps, but with a much
+ * simpler implementation and lower constants.
+ *
+ * This implementation supports a min-heap without using any dynamic memory
+ * allocation (all memory is allocated by the caller), embedding pointers within
+ * container structures in order to simplify memory usage.
+ *
+ * Pairing heaps were invented by Fredman, Sedgewick, Sleator, and Tarjan,
+ * inspired by splay trees. For more information, see
+ * https://en.wikipedia.org/wiki/Pairing_heap
+ *
  * \author Brian Kubisiak
  *
  * \copyright This is free and unencumbered software released into the public
@@ -40,10 +53,36 @@
 #include "pheap.h"
 #include "utils.h"
 
+/**
+ * \brief Merge two nodes of the pairing heap.
+ *
+ * Takes two nodes in a pairing heap and merges them together, maintaining the
+ * heap property. To do this, the minimum of the two nodes is set as the root,
+ * and the other is merged into its children. When this operation is done, the
+ * returned node is the only one of the parameters that should be manipulated
+ * further.
+ *
+ * \param [in] ph The heap containing \p pe0 and \p pe1.
+ * \param [in] pe0 The first pairing element to merge.
+ * \param [in] pe1 The second pairing element to merge.
+ *
+ * \return Returns the smaller of the two elements, with the other merged into
+ * its children.
+ *
+ * \pre <tt>ph != NULL</tt>
+ * \pre <tt>pe0 != NULL</tt>
+ * \pre <tt>pe1 != NULL</tt>
+ *
+ * \note This operation has time complexity of O(1).
+ */
 static struct pheap_elem *_merge(const struct pheap *ph, struct pheap_elem *pe0,
         struct pheap_elem *pe1)
 {
     struct pheap_elem *ret;
+
+    assert(ph != NULL);
+    assert(pe0 != NULL);
+    assert(pe1 != NULL);
 
     if (ph->cmp(pe0, pe1) < 0)
     {
@@ -59,6 +98,22 @@ static struct pheap_elem *_merge(const struct pheap *ph, struct pheap_elem *pe0,
     return ret;
 }
 
+/**
+ * \brief Merge pairs of nodes and reverse the order.
+ *
+ * Given a list of \p src nodes, merge adjacent pairs and reverse the ordering
+ * of the result. The resulting merged nodes are stored in \p dst. This is the
+ * first merge pass when deleting the minimum node from the heap.
+ *
+ * \param [in] ph Pairing heap containing the nodes to merge.
+ * \param [out] dst List into which the nodes are merged.
+ * \param [in] src List from which to merge nodes.
+ *
+ * \post \c list_isempty(src)
+ *
+ * \note This operation has a time complexity of O(n) with respect to the length
+ * of \p src.
+ */
 static void _merge_pairs_reverse(const struct pheap *ph, struct list *dst,
         struct list *src)
 {
@@ -83,6 +138,24 @@ static void _merge_pairs_reverse(const struct pheap *ph, struct list *dst,
     }
 }
 
+/**
+ * \brief Merge a list of nodes into a single node.
+ *
+ * Given a list of \p src nodes, merge them all together to extract the minimum
+ * node in the list. This function is the second merge pass when deleting the
+ * minimum node in the tree; the result of this function will be the new root of
+ * the heap.
+ *
+ * \param [in] ph Heap containing the list of nodes.
+ * \param [in] src List of nodes to merge together.
+ *
+ * \return Returns the new root of the list.
+ *
+ * \post \c list_isempty(src)
+ *
+ * \note This function has a time complexity of O(n) with respect to the length
+ * of the list \p src.
+ */
 static struct pheap_elem *_accumulate(const struct pheap *ph, struct list *src)
 {
     struct pheap_elem *ret;
@@ -106,22 +179,68 @@ static struct pheap_elem *_accumulate(const struct pheap *ph, struct list *src)
     return ret;
 }
 
+/**
+ * \brief Initialize an element to use with a pairing heap.
+ *
+ * Since individual elements contain lists, they must be initialized before they
+ * are added to a heap. This function will make sure that the element is ready
+ * to be used.
+ *
+ * \param [inout] pe The element to initialize.
+ */
 void pheap_elem_init(struct pheap_elem *pe)
 {
     list_init(&pe->children);
 }
 
+/**
+ * \brief Initialize a pairing heap for use.
+ *
+ * This function prepares the heap for use. After calling this function,
+ *relements can be added to the heap. Note that the elements themselves must
+ * also be initialized before they can be added.
+ *
+ * \param [inout] ph The heap to initialize.
+ * \param [in] cmp Function for comparing two elements on the heap. This
+ * function takes as arguments two \c pheap_elem structures, and returns an
+ * integer less than, equal to, or greater than zero if the first element is
+ * respectively less than, equal to, or greater than the second element.
+ */
 void pheap_init(struct pheap *ph, cmp_func cmp)
 {
     ph->cmp = cmp;
     ph->root = NULL;
 }
 
+/**
+ * \brief Get the minimum element from the heap without removing it.
+ *
+ * If there are no elements on the heap, returns \c NULL. To remove the minimum
+ * element, use the #pheap_pop() function.
+ *
+ * \param [in] ph Pairing heap from which to find the minimum element.
+ *
+ * \return Returns the minimum element on the heap.
+ *
+ * \note This operation has a time complexity of O(1).
+ */
 struct pheap_elem *pheap_peek(const struct pheap *ph)
 {
     return ph->root;
 }
 
+/**
+ * \brief Push a new element onto the pairing heap.
+ *
+ * If the pairing heap is empty, the new element is added as the root.
+ * Otherwise, the new element is merged with the root. This operation is thus
+ * constant-time, putting off most of the work into the #pheap_pop() function.
+ *
+ * \param [in] ph Heap onto which the new element is pushed.
+ * \param [in] pe New element to push onto the heap.
+ *
+ * \note This operation has a time-complexity of O(1).
+ */
 void pheap_push(struct pheap *ph, struct pheap_elem *pe)
 {
     assert(pe != NULL);
@@ -136,9 +255,28 @@ void pheap_push(struct pheap *ph, struct pheap_elem *pe)
     }
 }
 
-void pheap_pop(struct pheap *ph)
+/**
+ * \brief Remove the minimum element from the pairing heap.
+ *
+ * After the element is removed, its children are merged in pairs, then the
+ * resulting list of children is merged into a new root.
+ *
+ * This operation will run in time O(n) with respect to the number of children
+ * of the root. As a result, it will be amortized to O(log n) with respect to
+ * the size of the heap. See https://en.wikipedia.org/wiki/Pairing_heap for
+ * further analysis of the time complexity.
+ *
+ * \param [in] ph Pairing heap from which to remove the smallest element.
+ *
+ * \note This operation has an amortized time-complexity O(log n) with respect
+ * to the number of elements on the heap.
+ */
+struct pheap_elem *pheap_pop(struct pheap *ph)
 {
     struct list merged;
+    struct pheap_elem *ret;
+
+    ret = ph->root;
 
     /* If the heap is empty, then we have nothing to do. */
     if (!pheap_isempty(ph))
@@ -160,8 +298,22 @@ void pheap_pop(struct pheap *ph)
         ph->root = _accumulate(ph, &merged);
         assert(list_isempty(&merged));
     }
+
+    return ret;
 }
 
+/**
+ * \brief Merge together two heaps.
+ *
+ * Merges all the elements from \p src into the heap \p dst. After this
+ * operation, \p src will be empty and \p dst will contain all elements that
+ * were previously in either \p src and \p dst.
+ *
+ * \param [out] dst Heap into which the elements of \p src are merged.
+ * \param [in] src Heap to merge into \p dst.
+ *
+ * \note This operation has a time-complexity of O(1).
+ */
 void pheap_merge(struct pheap *dst, struct pheap *src)
 {
     assert(dst->cmp == src->cmp);
@@ -175,6 +327,16 @@ void pheap_merge(struct pheap *dst, struct pheap *src)
     assert(pheap_isempty(src));
 }
 
+/**
+ * \brief Check if the given heap is empty.
+ *
+ * \param [in] ph Pairing heap to check for emptiness.
+ *
+ * \return Returns 0 is there are elements on the heap. Returns nonzero if there
+ * are no elements on the heap.
+ *
+ * \note This operation has a time-complexity of O(1).
+ */
 int pheap_isempty(struct pheap *ph)
 {
     return ph->root == NULL;
