@@ -1,5 +1,5 @@
 MAKE	?=	make
-SUBDIRS	=	binheap list
+SUBDIRS	=	binheap list pheap
 CLEAN	=	$(addsuffix .clean,$(SUBDIRS))
 
 .PHONY: all $(SUBDIRS)
