@@ -162,6 +162,19 @@ void pheap_pop(struct pheap *ph)
     }
 }
 
+void pheap_merge(struct pheap *dst, struct pheap *src)
+{
+    assert(dst->cmp == src->cmp);
+
+    if (!pheap_isempty(src))
+    {
+        pheap_push(dst, src->root);
+        src->root = NULL;
+    }
+
+    assert(pheap_isempty(src));
+}
+
 int pheap_isempty(struct pheap *ph)
 {
     return ph->root == NULL;

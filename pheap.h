@@ -75,6 +75,7 @@ void pheap_init(struct pheap *ph, cmp_func cmp);
 struct pheap_elem *pheap_peek(const struct pheap *ph);
 void pheap_push(struct pheap *ph, struct pheap_elem *pe);
 void pheap_pop(struct pheap *ph);
+void pheap_merge(struct pheap *dst, struct pheap *src);
 int pheap_isempty(struct pheap *ph);
 
 
