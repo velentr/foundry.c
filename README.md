@@ -8,11 +8,11 @@ algorithms that can be reused across projects, similar to STL.
 
 The following data structures have been written:
 
- - `vector` : Dynamically-resizable arrays.
  - `binheap` : Binary min-heap, implemented using a vector.
- - `list` : Doubly-linked list without any dynamic memory allocation.
  - `htable` : Hash table using linked lists for collisions.
+ - `list` : Doubly-linked list without any dynamic memory allocation.
  - `pheap` : Pairing heap, using doubly-linked lists.
+ - `vector` : Dynamically-resizable arrays.
 
 ## Algorithms
 
