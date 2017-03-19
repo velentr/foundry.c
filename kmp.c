@@ -56,10 +56,22 @@ static void _compute_table(const char *key, char *table, size_t len)
     pos = 2;
     cnd = 0;
 
-    assert(len > 2);
+    assert(len > 0);
 
-    table[0] = -1;
-    table[1] = 0;
+    switch (len)
+    {
+    case 2:
+        table[1] = 0;
+        /* fallthrough */
+    case 1:
+        table[0] = -1;
+        return;
+    default:
+        table[0] = -1;
+        table[1] = 0;
+    }
+
+    assert(len > 2);
 
     while (pos < len)
     {
@@ -104,13 +116,19 @@ static void _compute_table(const char *key, char *table, size_t len)
  * hlen.
  *
  * \note This function runs in O(hlen + nlen) time and uses O(nlen) space.
+ *
+ * \note There are two 'nonsense' cases that can be passed in: when the \p
+ * needle is the empty string, and when the \p haystack is an empty string. In
+ * both cases, \c 0 is returned.
  */
 size_t kmp(const char *needle, size_t nlen, const char *haystack, size_t hlen)
 {
     char table[nlen];
     size_t match;
     size_t cur;
-    size_t ret;
+
+    if (nlen == 0)
+        return 0;
 
     /* Computing the table runs in O(nlen) time. */
     _compute_table(needle, table, nlen);
@@ -129,8 +147,7 @@ size_t kmp(const char *needle, size_t nlen, const char *haystack, size_t hlen)
              */
             if (cur == nlen - 1)
             {
-                ret = match;
-                break;
+                return match;
             }
             /* Continue building the current match. */
             else
@@ -157,8 +174,6 @@ size_t kmp(const char *needle, size_t nlen, const char *haystack, size_t hlen)
     }
 
     /* If we reach here, that means that haystack does not contain needle. */
-    ret = hlen;
-
-    return ret;
+    return hlen;
 }
 
