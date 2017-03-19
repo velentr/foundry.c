@@ -25,7 +25,7 @@
 /**
  * \file kmp.c
  *
- * \brief Knuth-Morris-Pratt string searching.
+ * \brief Knuth-Morris-Pratt string searching algorithm.
  *
  * The KMP string searching algorithm attempts to locate a given \c needle
  * within the given \c haystack. The for a \c needle of length \c k and a \c
@@ -106,6 +106,10 @@ static void _compute_table(const char *key, char *table, size_t len)
  * Using this table, we can scan through \p haystack only once without having to
  * worry about backtracking in the case of a partial match.
  *
+ * There are two 'nonsense' cases that can be passed in: when the \p needle is
+ * the empty string, and when the \p haystack is an empty string. In both cases,
+ * \c 0 is returned.
+ *
  * \param [in] needle The string to search for in \p haystack.
  * \param [in] nlen The number of characters in \p needle.
  * \param [in] haystack The string to search through for \p needle.
@@ -113,13 +117,9 @@ static void _compute_table(const char *key, char *table, size_t len)
  *
  * \return If \p needle is found in \p haystack, returns the position of the
  * match within \p haystack. If \p needle is not in \p haystack, returns \p
- * hlen.
+ * hlen. If either \p needle or \p haystack is an empty string, returns \c 0.
  *
  * \note This function runs in O(hlen + nlen) time and uses O(nlen) space.
- *
- * \note There are two 'nonsense' cases that can be passed in: when the \p
- * needle is the empty string, and when the \p haystack is an empty string. In
- * both cases, \c 0 is returned.
  */
 size_t kmp(const char *needle, size_t nlen, const char *haystack, size_t hlen)
 {
