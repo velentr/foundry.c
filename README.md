@@ -19,6 +19,7 @@ The following data structures have been written:
 The following algorithms are implemented:
 
  - `bresenham` : Bresenham's line drawing algorithm.
+ - `kmp` : Knuth-Morris-Pratt string searching algorithm.
 
 # Unlicense
 

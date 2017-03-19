@@ -2,7 +2,7 @@ CC	?=	gcc
 MAKE	?=	make
 CFLAGS	+=	-c -O3 -DNDEBUG -march=native -pedantic -std=c99 -pipe
 CFLAGS	+=	-Wall -Wextra -Werror -Wno-unused-function
-MOD	=	binheap bresenham htable list pheap vector
+MOD	=	binheap bresenham htable kmp list pheap vector
 OBJ	= 	$(addsuffix .o,$(MOD))
 SRC	=	$(addsuffix .c,$(MOD)) $(addsuffix .h,$(MOD))
 TESTDIR	=	tests
@@ -31,6 +31,9 @@ bresenham.o: bresenham.c bresenham.h
 	$(CC) $(CFLAGS) $<
 
 htable.o: htable.c htable.h list.h utils.h
+	$(CC) $(CFLAGS) $<
+
+kmp.o: kmp.c kmp.h
 	$(CC) $(CFLAGS) $<
 
 list.o: list.c list.h
