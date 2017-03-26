@@ -37,6 +37,9 @@
 #ifndef _UTILS_H_
 #define _UTILS_H_
 
+
+#include <stddef.h>
+
 /**
  * \brief Get a pointer to the structure containing the given element.
  *
