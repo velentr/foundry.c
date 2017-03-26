@@ -68,7 +68,7 @@
 
 #define MAX_RBTREE_DEPTH 128
 
-static int _check_node_colors(struct rbnode *node)
+static int _check_node_colors(const struct rbnode *node)
 {
     if (node == NULL)
         return 0;
@@ -81,12 +81,12 @@ static int _check_node_colors(struct rbnode *node)
         return 0;
 }
 
-static int _is_black(struct rbnode *node)
+static int _is_black(const struct rbnode *node)
 {
     return node == NULL || node->color == RB_BLACK;
 }
 
-static int _check_red_nodes(struct rbnode *node)
+static int _check_red_nodes(const struct rbnode *node)
 {
     if (node != NULL && node->color == RB_RED
             && (!_is_black(node->left) || !_is_black(node->right)))
@@ -99,7 +99,7 @@ static int _check_red_nodes(struct rbnode *node)
     }
 }
 
-static int _get_black_depth(struct rbnode *node)
+static int _get_black_depth(const struct rbnode *node)
 {
     int left, right;
 
@@ -137,6 +137,28 @@ static void _rotate_right(struct rbnode **n)
     *n = parent->left;
     parent->left = (*n)->right;
     (*n)->right = parent;
+}
+
+static int _traverse(const struct rbnode *node, RBCallback cb, void *scratch)
+{
+    int rc;
+
+    if (node == NULL)
+        return 0;
+
+    rc = _traverse(node->left, cb, scratch);
+    if (rc != 0)
+        return rc;
+
+    rc = cb(node, scratch);
+    if (rc != 0)
+        return rc;
+
+    rc = _traverse(node->right, cb, scratch);
+    if (rc != 0)
+        return rc;
+
+    return 0;
 }
 
 /**
@@ -351,10 +373,6 @@ void rbtree_delete(struct rbtree *tree, struct rbnode *to_del)
 
 int rbtree_traverse(struct rbtree *tree, RBCallback callback, void *scratch)
 {
-    (void)tree;
-    (void)callback;
-    (void)scratch;
-
-    return 0;
+    return _traverse(tree->root, callback, scratch);
 }
 

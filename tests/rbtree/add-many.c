@@ -24,11 +24,23 @@ static int cmp(const void *_a, const void *_b)
     return a->n - b->n;
 }
 
+static int _check_prev(const struct rbnode *_node, void *_prev)
+{
+    int *prev = _prev;
+    const struct uut_node *node = containerof(_node, struct uut_node, rbn);
+
+    assert(node->n >= *prev);
+    *prev = node->n;
+
+    return 0;
+}
+
 int main(int argc, char *argv[])
 {
     struct rbtree tree;
     struct uut_node nodes[TEST_SIZE];
     size_t i;
+    int prev;
 
     rbtree_init(&tree, cmp);
 
@@ -38,5 +50,10 @@ int main(int argc, char *argv[])
         rbtree_insert(&tree, &nodes[i].rbn);
     }
 
+    prev = 0;
+
+    rbtree_traverse(&tree, _check_prev, &prev);
+
     return 0;
 }
+
