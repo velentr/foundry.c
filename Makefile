@@ -4,7 +4,7 @@ CFLAGS	+=	-c -O3 -DNDEBUG -march=native -pedantic -std=c99 -pipe
 CFLAGS	+=	-Wall -Wextra -Werror -Wno-unused-function
 MOD	=	binheap bresenham htable kmp list pheap vector
 OBJ	= 	$(addsuffix .o,$(MOD))
-SRC	=	$(addsuffix .c,$(MOD)) $(addsuffix .h,$(MOD))
+SRC	=	$(addsuffix .c,$(MOD)) $(addsuffix .h,$(MOD)) utils.h
 TESTDIR	=	tests
 
 .PHONY: debug all mostlyclean distclean clean test

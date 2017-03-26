@@ -57,6 +57,20 @@
             - offsetof(STRUCT, MEMBER)))
 
 /**
+ * \brief Get the length of a stack-allocated array.
+ *
+ * Given a stack-allocated array (e.g. int arr[4]), returns the size of the
+ * total array divided by the size of each individual element. If the argument
+ * is not a stack-allocated array, then behavior is undefined; the code may
+ * still compile and run, but you will not get the result you are looking for.
+ *
+ * \param ARR The array of which to find the length.
+ *
+ * \return Returns the length of the given array \p ARR.
+ */
+#define lengthof(ARR) (sizeof(ARR) / sizeof(*ARR))
+
+/**
  * \brief Pointer to a function that is used for comparing two items.
  *
  * The function should compare the two items and return a number less than,
