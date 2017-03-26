@@ -1,5 +1,5 @@
 MAKE	?=	make
-SUBDIRS	=	binheap bresenham kmp list pheap
+SUBDIRS	=	binheap bresenham kmp list pheap rbtree
 CLEAN	=	$(addsuffix .clean,$(SUBDIRS))
 
 .PHONY: all $(SUBDIRS)
