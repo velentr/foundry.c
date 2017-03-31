@@ -292,3 +292,45 @@ int ht_isempty(const struct hash_table *ht)
     return 1;
 }
 
+/**
+ * \brief Remove an element from its containing hash table.
+ *
+ * Given a pointer to an element already in a hash table, removes the element
+ * from its container. In order to get the element to remove, use the #ht_get()
+ * function.
+ *
+ * \param [in] he Pointer to the hash element to remove.
+ *
+ * \pre <tt>he != NULL</tt>
+ *
+ * \return Returns \p he, as a convenience.
+ */
+struct hash_elem *ht_remove(struct hash_elem *he)
+{
+    assert(he != NULL);
+
+    (void)list_remove(&he->le);
+
+    return he;
+}
+
+/**
+ * \brief Get the total number of buckets in the hash table.
+ *
+ * This can be used to calculate whether or not the hash table needs to be
+ * rehashed.
+ *
+ * \param [in] ht Pointer to the hash table to count the buckets of.
+ *
+ * \pre <tt>ht != NULL</tt>
+ *
+ * \return Returns the total number of buckets currently stored by the hash
+ * table.
+ */
+size_t ht_space(const struct hash_table *ht)
+{
+    assert(ht != NULL);
+
+    return ht->len;
+}
+

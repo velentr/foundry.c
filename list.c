@@ -227,3 +227,189 @@ void list_cat(struct list *dst, struct list *src)
     dst->sentinal.prev = tail_src;
 }
 
+/**
+ * \brief Get the first element from the list.
+ *
+ * \param [in] l Pointer to the linked list to get the first element from.
+ *
+ * \pre <tt>l != NULL</tt>
+ *
+ * \return Returns a pointer to the first element of \p l.
+ */
+struct list_elem *list_head(const struct list *l)
+{
+    assert(l != NULL);
+
+    /* Get the first valid (non-sentinal) element in the list, and return it. */
+    return l->sentinal.next;
+}
+
+/**
+ * \brief Get the last element from the list.
+ *
+ * \param [in] l Pointer to the linked list to get the last element from.
+ *
+ * \pre <tt>l != NULL</tt>
+ *
+ * \return Returns a pointer to the last element of \p l.
+ */
+struct list_elem *list_tail(const struct list *l)
+{
+    assert(l != NULL);
+
+    return l->sentinal.prev;
+}
+
+/**
+ * \brief Get the beginning of the list for iteration.
+ *
+ * To iterate over a linked list, use the following snippet:
+ * \code
+ * struct list_elem *e;
+ *
+ * for (e = list_begin(l); e != list_end(l); e = list_next(e))
+ * {
+ *     ...
+ * }
+ * \endcode
+ *
+ * \param [in] l Pointer to the linked list to start iterating over.
+ *
+ * \pre <tt>l != NULL</tt>
+ *
+ * \return Returns the first element in the linked list \p l.
+ */
+struct list_elem *list_begin(const struct list *l)
+{
+    assert(l != NULL);
+
+    /* When iterating forwards, the beginning is the first valid (non-sentinal
+     * element in the list. */
+    return list_head(l);
+}
+
+/**
+ * \brief Get the next element in the list.
+ *
+ * Iterate over a linked list by getting the element after \p e in the list. See
+ * #list_begin() to see how to iterate over the entire list.
+ *
+ * \param [in] e Pointer to the current element in the list.
+ *
+ * \pre <tt>e != NULL</tt>
+ *
+ * \return Returns a pointer to the next element in the list.
+ */
+struct list_elem *list_next(const struct list_elem *e)
+{
+    assert(e != NULL);
+
+    return e->next;
+}
+
+/**
+ * \brief Get the previous element in the list.
+ *
+ * Iterate backwards over a linked list by getting the element before \p e in
+ * the list. See #list_begin() for an example of how to iterate over a linked
+ * list.
+ *
+ * \param [in] e Pointer to the current element in the list.
+ *
+ * \pre <tt>e != NULL</tt>
+ *
+ * \return Returns a pointer to the previous element in the list.
+ */
+struct list_elem *list_prev(const struct list_elem *e)
+{
+    assert(e != NULL);
+
+    return e->prev;
+}
+
+/**
+ * \brief Get a special end-of-list indicator.
+ *
+ * Gets a list element that does not correspond with any valid data. When
+ * iterating over the list, this value indicates that the end of the list has
+ * been reached. See #list_begin() for an example of how to iterate over the
+ * list.
+ *
+ * \param [in] l Pointer to the linked list for which to get the end-of-list
+ *          indicator.
+ *
+ * \pre <tt>l != NULL</tt>
+ *
+ * \return Returns a pointer that indicates the end of the list has been
+ *         reached.
+ */
+struct list_elem *list_end(const struct list *l)
+{
+    assert(l != NULL);
+
+    return (struct list_elem *)&l->sentinal;
+}
+
+/**
+ * \brief Push an element onto the front of a list.
+ *
+ * Adds the element \p e to the front of list \p l. Can be used with
+ * #list_popfront() to implement a simple stack, or with #list_popback() to
+ * implement a simple queue.
+ *
+ * \param [out] l Pointer to the list where \p e will be pushed.
+ * \param [in] e Pointer to the element to add to the front of \p l.
+ *
+ * \pre <tt>l != NULL</tt>
+ * \pre <tt>e != NULL</tt>
+ */
+void list_pushfront(struct list *l, struct list_elem *e)
+{
+    assert(l != NULL);
+    assert(e != NULL);
+
+    list_insert(&l->sentinal, e);
+}
+
+/**
+ * \brief Push an element onto the end of a list.
+ *
+ * Adds the element \p e to the end of list \p l. Can be used with
+ * #list_popback() to implement a simple stack, or with #list_popfront() to
+ * implement a simple queue.
+ *
+ * \param [out] l Pointer to the list where \p e will be pushed.
+ * \param [in] e Pointer to the element to add to the end of \p l.
+ *
+ * \pre <tt>l != NULL</tt>
+ * \pre <tt>e != NULL</tt>
+ */
+void list_pushback(struct list *l, struct list_elem *e)
+{
+    assert(l != NULL);
+    assert(l->sentinal.prev != NULL);
+    assert(e != NULL);
+
+    list_insert(l->sentinal.prev, e);
+}
+
+/**
+ * \brief Determine if a list is empty.
+ *
+ * Constant-time operation for calculating whether or not the given list
+ * contains any elements.
+ *
+ * \param [in] l Pointer to the list on which to determine emptyness.
+ *
+ * \pre <tt>l != NULL</tt>
+ *
+ * \return Returns false if the list contains any elements. Returns true if
+ *         there are no elements in the list.
+ */
+int list_isempty(const struct list *l)
+{
+    assert(l != NULL);
+
+    return (l->sentinal.prev == &l->sentinal);
+}
+
