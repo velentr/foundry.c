@@ -1,6 +1,6 @@
 CC	?=	gcc
 MAKE	?=	make
-CFLAGS	+=	-c -O3 -DNDEBUG -march=native -pedantic -std=c99 -pipe
+CFLAGS	+=	-c -O3 -DNDEBUG -march=native -pedantic -std=c99 -pipe -flto
 CFLAGS	+=	-Wall -Wextra -Werror -Wno-unused-function
 MOD	=	binheap bresenham htable kmp list pheap vector
 OBJ	= 	$(addsuffix .o,$(MOD))
