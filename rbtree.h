@@ -92,8 +92,8 @@ void rbtree_init(struct rbtree *tree, cmp_func compare);
 struct rbnode *rbtree_search(const struct rbtree *tree,
         const struct rbnode *key);
 void rbtree_insert(struct rbtree *tree, struct rbnode *to_add);
-void rbtree_delete(struct rbtree *tree, struct rbnode *to_del);
-int rbtree_traverse(struct rbtree *tree, RBCallback callback, void *scratch);
+int rbtree_traverse(const struct rbtree *tree, RBCallback callback,
+        void *scratch);
 
 
 #endif /* end of include guard: _RBTREE_H_ */
