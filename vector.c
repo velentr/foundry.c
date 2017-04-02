@@ -439,12 +439,15 @@ void vec_map(struct vector *v, VecOperator op, void *scratch)
  */
 void vec_swap(struct vector *v, size_t i, size_t j)
 {
-    char tmp[v->elemsize];
+    void *buf;
     void *_tmp;
 
     assert(v != NULL);
     assert(i < vec_len(v));
     assert(j < vec_len(v));
+
+    /* Use the last (empty) element for temporary storage. */
+    buf = (void *)(v->data + (v->space - 1)*v->elemsize);
 
     /* memcpy can't handle overlapping regions, so need to check this here. */
     if (i == j)
@@ -452,7 +455,7 @@ void vec_swap(struct vector *v, size_t i, size_t j)
 
     /* Get element i, and store it in a temporary variable. */
     _tmp = vec_get(v, i);
-    memcpy(&tmp, _tmp, v->elemsize);
+    memcpy(buf, _tmp, v->elemsize);
 
     /*
      * Set the ith  element to the value of the jth element. The ith element is
@@ -461,7 +464,7 @@ void vec_swap(struct vector *v, size_t i, size_t j)
     vec_set(v, i, vec_get(v, j));
 
     /* Now move the temporary value into the jth element. */
-    vec_set(v, j, tmp);
+    vec_set(v, j, buf);
 }
 
 /*
@@ -478,7 +481,7 @@ static int _checkspace(struct vector *v)
      * Check if the vector is full (i.e. the buffer cannot fit another element
      * without resizing).
      */
-    if (vec_len(v) == vec_space(v))
+    if (vec_len(v) == vec_space(v) - 1)
     {
         /* If it is full, double the space used by the buffer. */
         rc = vec_resize(v, 2 * vec_len(v) * v->elemsize);

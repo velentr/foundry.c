@@ -111,6 +111,8 @@ static void _compute_table(const char *key, char *table, size_t len)
  * \c 0 is returned.
  *
  * \param [in] needle The string to search for in \p haystack.
+ * \param [in] table A chunk of memory to use for computing the backtrack table.
+ * This array must be at least \p nlen bytes long.
  * \param [in] nlen The number of characters in \p needle.
  * \param [in] haystack The string to search through for \p needle.
  * \param [in] hlen The number of characters in \p haystack.
@@ -119,11 +121,14 @@ static void _compute_table(const char *key, char *table, size_t len)
  * match within \p haystack. If \p needle is not in \p haystack, returns \p
  * hlen. If either \p needle or \p haystack is an empty string, returns \c 0.
  *
- * \note This function runs in O(hlen + nlen) time and uses O(nlen) space.
+ * \note This function runs in O(hlen + nlen) time and uses O(1) additional
+ * space. The only O(nlen) temporary storage for this function is in \p table;
+ * this is provided by the user to avoid any dynamic memory allocation in this
+ * function.
  */
-size_t kmp(const char *needle, size_t nlen, const char *haystack, size_t hlen)
+size_t kmp(const char *needle, char *table, size_t nlen,
+        const char *haystack, size_t hlen)
 {
-    char table[nlen];
     size_t match;
     size_t cur;
 

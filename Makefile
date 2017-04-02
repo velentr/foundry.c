@@ -1,6 +1,6 @@
 CC	?=	gcc
 MAKE	?=	make
-CFLAGS	+=	-c -O3 -DNDEBUG -march=native -pedantic -std=c99 -pipe -flto
+CFLAGS	+=	-c -O3 -DNDEBUG -march=native -ansi -pedantic -pipe -flto
 CFLAGS	+=	-Wall -Wextra -Werror -Wno-unused-function
 MOD	=	binheap bresenham htable kmp list pheap rbtree vector
 OBJ	= 	$(addsuffix .o,$(MOD))
@@ -10,7 +10,7 @@ TESTDIR	=	tests
 .PHONY: debug all mostlyclean distclean clean test
 
 debug: CFLAGS = -c -O0 -g -Wall -Wextra -Wno-unused-function \
-    -Wstrict-prototypes -pedantic -std=c99
+    -Wstrict-prototypes -ansi -pedantic
 
 
 all: $(OBJ)
