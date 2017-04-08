@@ -321,7 +321,7 @@ void *vec_tail(const struct vector *v)
  * Also note that the returned index is signed, whereas it should normally be an
  * unsigned number for the other vector operations.
  */
-int vec_push(struct vector *v, void *e)
+int vec_push(struct vector *v, const void *e)
 {
     int rc;
 
@@ -664,7 +664,7 @@ void *vec_get(const struct vector *v, size_t i)
  * there is unfreed memory there, make sure to #vec_get() the element before
  * calling this function, or the pointer will be lost forever.
  */
-void vec_set(struct vector *v, size_t i, void *e)
+void vec_set(struct vector *v, size_t i, const void *e)
 {
     assert(v != NULL);
     assert(i < vec_len(v));

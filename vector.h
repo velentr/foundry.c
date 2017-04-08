@@ -120,7 +120,7 @@ int vec_init(struct vector *v, size_t elemsize, size_t len,
 int vec_resize(struct vector *v, size_t size);
 void *vec_head(const struct vector *v);
 void *vec_tail(const struct vector *v);
-int vec_push(struct vector *v, void *e);
+int vec_push(struct vector *v, const void *e);
 int vec_pop(struct vector *v);
 void vec_map(struct vector *v, VecOperator op, void *scratch);
 void vec_swap(struct vector *v, size_t i, size_t j);
@@ -130,7 +130,7 @@ size_t vec_space(const struct vector *v);
 int vec_shrink(struct vector *v);
 int vec_isempty(const struct vector *v);
 void *vec_get(const struct vector *v, size_t i);
-void vec_set(struct vector *v, size_t i, void *e);
+void vec_set(struct vector *v, size_t i, const void *e);
 
 
 #endif /* end of include guard: _VECTOR_H_ */
