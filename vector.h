@@ -134,3 +134,4 @@ void vec_set(struct vector *v, size_t i, const void *e);
 
 
 #endif /* end of include guard: _VECTOR_H_ */
+

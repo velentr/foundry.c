@@ -41,3 +41,4 @@ size_t kmp(const char *needle, char *table, size_t nlen,
 
 
 #endif /* end of include guard: _KMP_H_ */
+

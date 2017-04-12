@@ -100,3 +100,4 @@ void *binheap_peek(const struct binheap *bh);
 
 
 #endif /* end of include guard: _BINHEAP_H_ */
+

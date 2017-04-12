@@ -57,3 +57,4 @@ size_t bresenham(const struct point *p0, const struct point *p1,
 
 
 #endif /* end of include guard:  */
+
