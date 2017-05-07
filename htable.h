@@ -84,7 +84,7 @@ typedef size_t (*hasher)(const struct hash_elem *e, size_t numbuckets);
  * function is used to find hash collisions.
  *
  * Lookup time (assuming minimal collisions) is in constant time. Hash elements
- * should be embedded embedded in container structures.
+ * should be embedded in container structures.
  */
 struct hash_table
 {
