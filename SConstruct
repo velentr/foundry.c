@@ -33,6 +33,7 @@ def add_test(t, mods):
 # Add all the tests in the 'tests' directory
 add_test('binheap', ['binheap', 'vector'])
 add_test('bresenham', ['bresenham'])
+add_test('fixpt', ['fixpt'])
 add_test('kmp', ['kmp'])
 add_test('list', ['list'])
 add_test('pheap', ['list', 'pheap'])
