@@ -36,19 +36,31 @@
 #include <stdint.h>
 
 #ifndef FIXPT_TOTAL
+/**
+ * \brief Total number of bits in the fixed-point type.
+ */
 #define FIXPT_TOTAL 32
 #endif
 
 #ifndef FIXPT_FRAC
+/**
+ * \brief Number of fractional bits in the fixed-point type.
+ */
 #define FIXPT_FRAC 16
 #endif
 
+/**
+ * \brief Number of integer bits in the fixed-point type.
+ */
 #define FIXPT_INT (FIXPT_TOTAL - FIXPT_FRAC - 1)
 
 #if FIXPT_INT < 0
 #error Too many fractional bits
 #endif
 
+/**
+ * \brief Fixed-point type.
+ */
 typedef int32_t fixpt_t;
 
 fixpt_t fixpt_add(fixpt_t a, fixpt_t b);
@@ -56,6 +68,7 @@ fixpt_t fixpt_sub(fixpt_t a, fixpt_t b);
 fixpt_t fixpt_mul(fixpt_t a, fixpt_t b);
 fixpt_t fixpt_div(fixpt_t a, fixpt_t b);
 fixpt_t fixpt_from_int(int32_t n);
+int32_t fixpt_to_int(fixpt_t n);
 
 
 #endif /* end of include guard: _FIXPT_H_ */
