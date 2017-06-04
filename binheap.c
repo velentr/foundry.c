@@ -121,14 +121,14 @@
  * \pre <tt>bh != NULL</tt>
  * \pre <tt>i < vec_len(&(bh->vec))</tt>
  */
-static void _siftup(struct binheap *bh, unsigned int i)
+static void _siftup(struct binheap *bh, size_t i)
 {
     /* The code below will look cleaner if we keep a pointer to the vector in a
      * local variable */
     struct vector *v;
 
     /* Index of the parent of the current node. */
-    unsigned int p;
+    size_t p;
 
     assert(bh != NULL);
     assert(i < vec_len(&(bh->vec)));
@@ -177,22 +177,22 @@ static void _siftup(struct binheap *bh, unsigned int i)
  * \pre <tt>bh != NULL</tt>
  * \pre <tt>i < vec_len(&(bh->vec))</tt>
  */
-static void _siftdown(struct binheap *bh, unsigned int i)
+static void _siftdown(struct binheap *bh, size_t i)
 {
     /* The code below will look cleaner if we keep a pointer to the vector in a
      * local variable */
     struct vector *v;
 
     /* Indices of the left and right children of the root node at i. */
-    unsigned int l;
-    unsigned int r;
+    size_t l;
+    size_t r;
 
     /*
      * Index of the node that is the smallest of the root and its children.
      * Initialize it to the root, so that it only needs to be changed if one of
      * the children is smaller.
      */
-    unsigned int smallest = i;
+    size_t smallest = i;
 
     assert(bh != NULL);
     assert(vec_isempty(&bh->vec) || i < vec_len(&(bh->vec)));
@@ -258,7 +258,7 @@ static void _siftdown(struct binheap *bh, unsigned int i)
  */
 static int _checkheap(const struct binheap *bh)
 {
-    unsigned int i;             /* Loop index for iterating over vector. */
+    size_t i;                   /* Loop index for iterating over vector. */
     int rc = 0;                 /* Return value for tracking heap violations. */
     const struct vector *v;     /* Stores the vector to iterate over. */
 
