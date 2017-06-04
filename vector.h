@@ -108,7 +108,7 @@ struct vector
  *       if you are summing the elements), then use the scratch pointer to hold
  *       the return value.
  */
-typedef void (*VecOperator)(void *e, unsigned int i, void *scr);
+typedef void (*VecOperator)(void *e, size_t i, void *scr);
 
 
 /*

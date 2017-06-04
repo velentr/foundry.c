@@ -87,8 +87,7 @@ static int _checkspace(struct vector *v);
  * \param len Initial value for the number of elements in the vector. If this
  *        argument is \c 0, then the default size will be used.
  * \param alloc Memory allocator used for performing all allocation for the
- *        vector. Interface should be equivalent to \c realloc. Should be set to
- *        \c NULL to use the default allocator.
+ *        vector. Interface should be equivalent to \c realloc.
  *
  * \return If the memory is successfully allocated, returns \c 0. If the memory
  *         allocation fails, returns \c -1.
@@ -133,16 +132,7 @@ int vec_init(struct vector *v, size_t elemsize, size_t len,
      * code by just resizing the vector.
      */
     v->data = NULL;
-
-    /* If no allocator is provided, just use 'realloc'. */
-    if (alloc == NULL)
-    {
-        v->realloc = realloc;
-    }
-    else
-    {
-        v->realloc = alloc;
-    }
+    v->realloc = alloc;
 
     return vec_resize(v, size);
 }
@@ -324,6 +314,7 @@ void *vec_tail(const struct vector *v)
 int vec_push(struct vector *v, const void *e)
 {
     int rc;
+    size_t idx;
 
     assert(v != NULL);
 
@@ -340,8 +331,9 @@ int vec_push(struct vector *v, const void *e)
      */
     if (rc == 0)
     {
-        rc = v->len++;
-        vec_set(v, rc, e);
+        idx = v->len++;
+        vec_set(v, idx, e);
+        rc = (int)idx;
     }
 
     return rc;
