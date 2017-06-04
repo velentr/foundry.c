@@ -36,7 +36,7 @@
 
 #include <stdlib.h>
 
-size_t kmp(const char *needle, char *table, size_t nlen,
+size_t kmp(const char *needle, size_t *table, size_t nlen,
         const char *haystack, size_t hlen);
 
 

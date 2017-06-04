@@ -5,7 +5,7 @@
 
 int main(int argc, char *argv[])
 {
-    char table[32];
+    size_t table[32];
     size_t rc;
     char *key = "12";
     char *str = "11111111121111";

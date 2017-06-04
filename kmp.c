@@ -48,7 +48,7 @@
  *
  * \note The time complexity of this function is O(len).
  */
-static void _compute_table(const char *key, char *table, size_t len)
+static void _compute_table(const char *key, size_t *table, size_t len)
 {
     size_t pos;
     size_t cnd;
@@ -61,14 +61,14 @@ static void _compute_table(const char *key, char *table, size_t len)
     switch (len)
     {
     case 2:
-        table[1] = 0;
+        table[1] = (size_t)0;
         /* fallthrough */
     case 1:
-        table[0] = -1;
+        table[0] = (size_t)~0;
         return;
     default:
-        table[0] = -1;
-        table[1] = 0;
+        table[0] = (size_t)~0;
+        table[1] = (size_t)0;
     }
 
     assert(len > 2);
@@ -126,7 +126,7 @@ static void _compute_table(const char *key, char *table, size_t len)
  * this is provided by the user to avoid any dynamic memory allocation in this
  * function.
  */
-size_t kmp(const char *needle, char *table, size_t nlen,
+size_t kmp(const char *needle, size_t *table, size_t nlen,
         const char *haystack, size_t hlen)
 {
     size_t match;
@@ -164,7 +164,7 @@ size_t kmp(const char *needle, char *table, size_t nlen,
         else
         {
             /* Backtrack to the point of the previous partial match. */
-            if (table[cur] > -1)
+            if (table[cur] != (size_t)~0)
             {
                 match = match + cur - table[cur];
                 cur = table[cur];
