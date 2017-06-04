@@ -10,7 +10,7 @@ foreach (@ARGV)
     $total++;
 
     my $result = `./$_ 2>&1`;
-    if ($result)
+    if ($result or $?)
     {
         print "\n--------\n$_ failed: $result--------\n";
     }
