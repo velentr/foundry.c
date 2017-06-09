@@ -70,7 +70,7 @@ static void _switchto(enum octant_t oct, const struct point *in,
                      struct point *out);
 static void _switchfrom(enum octant_t oct, const struct point *in,
                        struct point *out);
-enum octant_t _getoctant(const struct point *p0, const struct point *p1);
+static enum octant_t _getoctant(const struct point *p0, const struct point *p1);
 
 /**
  * \brief Draw a line between points \p p0 and \p p1, storing the output in the
@@ -279,7 +279,7 @@ static void _switchfrom(enum octant_t oct, const struct point *in,
  *
  * \return Returns the octant containing the line segment from \p p0 to \p p1.
  */
-enum octant_t _getoctant(const struct point *p0, const struct point *p1)
+static enum octant_t _getoctant(const struct point *p0, const struct point *p1)
 {
     int dx, dy;
 
