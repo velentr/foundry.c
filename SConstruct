@@ -1,6 +1,6 @@
 # List of modules that can be built into objects
-modules = ['binheap', 'bresenham', 'fixpt', 'htable', 'kmp', 'list', 'pheap',
-           'rbtree', 'vector']
+modules = ['binheap', 'bresenham', 'fixpt', 'graph', 'htable', 'kmp', 'list',
+           'pheap', 'rbtree', 'vector']
 
 # Common CFLAGS to use for every build
 cflags = '-ansi -pedantic -pipe -Wall -Wextra -Werror -Wno-unused-function '
