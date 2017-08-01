@@ -1,11 +1,11 @@
 # List of modules that can be built into objects
-modules = ['binheap', 'bresenham', 'fixpt', 'graph', 'htable', 'kmp', 'list',
-           'pheap', 'rbtree', 'vector']
+modules = ['binheap', 'blkalloc', 'bresenham', 'fixpt', 'graph', 'htable',
+           'kmp', 'list', 'pheap', 'rbtree', 'vector']
 
 # Common CFLAGS to use for every build
-cflags = '-ansi -pedantic -pipe -Wall -Wextra -Werror -Wno-unused-function '
+cflags = '-std=c99 -pedantic -pipe -Wall -Wextra -Werror -Wno-unused-function '
 # CFLAGS to use for optimized builds
-optflags = '-O3 -DNDEBUG -march=native -flto '
+optflags = '-O3 -DNDEBUG -DNVALGRIND -march=native -flto '
 # CFLAGS to use for debug builds
 dbgflags = '-O0 -g '
 
@@ -32,6 +32,7 @@ def add_test(t, mods):
 
 # Add all the tests in the 'tests' directory
 add_test('binheap', ['binheap', 'vector'])
+add_test('blkalloc', ['blkalloc', 'list'])
 add_test('bresenham', ['bresenham'])
 add_test('fixpt', ['fixpt'])
 add_test('kmp', ['kmp'])
