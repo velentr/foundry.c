@@ -9,10 +9,10 @@ foreach (@ARGV)
 {
     $total++;
 
-    my $result = `./$_ 2>&1`;
+    chomp (my $result = `./$_ 2>&1`);
     if ($result or $?)
     {
-        print "\n--------\n$_ failed: $result--------\n";
+        print "\n--------\n$_ failed: $result\n--------\n";
     }
     else
     {
@@ -22,3 +22,4 @@ foreach (@ARGV)
 }
 
 print "\n--------\nPassed $passed / $total.\n";
+
