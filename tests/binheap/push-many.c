@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
 
     assert(binheap_len(&uut) == TEST_SIZE);
 
-    binheap_free(&uut);
+    binheap_destroy(&uut);
 
     return 0;
 }

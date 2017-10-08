@@ -92,7 +92,7 @@ int binheap_init(struct binheap *bh, cmp_func cmp, size_t elemsize,
         size_t size, void *(*alloc)(void *, size_t));
 int binheap_push(struct binheap *bh, void *e);
 int binheap_pop(struct binheap *bh);
-void binheap_free(struct binheap *bh);
+void binheap_destroy(struct binheap *bh);
 size_t binheap_len(const struct binheap *bh);
 size_t binheap_space(const struct binheap *bh);
 int binheap_isempty(const struct binheap *bh);

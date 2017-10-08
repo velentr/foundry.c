@@ -347,12 +347,12 @@ int binheap_init(struct binheap *bh, cmp_func cmp, size_t elemsize,
  * freed before calling this function. The best way to do this is to pop them
  * all until the heap is empty, freeing them individually.
  */
-void binheap_free(struct binheap *bh)
+void binheap_destroy(struct binheap *bh)
 {
     assert(bh != NULL);
 
     /* Deinitialize the vector holding the heap data. */
-    vec_free(&(bh->vec));
+    vec_destroy(&(bh->vec));
 }
 
 /**

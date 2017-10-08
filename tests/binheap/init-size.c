@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     assert(binheap_space(&uut) == TEST_SIZE);
     assert(binheap_isempty(&uut));
 
-    binheap_free(&uut);
+    binheap_destroy(&uut);
 
     return 0;
 }

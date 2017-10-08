@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
     assert(*(int*)binheap_peek(&uut) == 4);
     binheap_pop(&uut);
 
-    binheap_free(&uut);
+    binheap_destroy(&uut);
 
     return 0;
 }

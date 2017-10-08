@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
     assert(binheap_len(&uut) == 1);
     assert(!binheap_isempty(&uut));
 
-    binheap_free(&uut);
+    binheap_destroy(&uut);
 
     return 0;
 }
