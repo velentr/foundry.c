@@ -1,5 +1,6 @@
 *.o
 *.swp
 *.test
-docs/
+docs/_*
 .sconsign.dblite
+
